@@ -1,27 +1,27 @@
-# Fullscrap — Panduan Lengkap Scraping TikTok & Instagram
+# Fullscrap — Panduan Scraping TikTok & Instagram (Tested & Works)
 
 > **Internal use — Tim TITANPRO**  
-> Diuji & diverifikasi: Juli 2026
-
-Repo ini adalah panduan teknis + source code lengkap untuk scraping akun TikTok dan Instagram menggunakan semua provider yang **tested dan confirmed working**. Tersedia implementasi TypeScript dan Python.
+> Terakhir diuji: **Juli 2026**  
+> ✅ = Diuji langsung dan confirmed works | ❌ = Tidak dimasukkan (belum/tidak bisa diverifikasi)
 
 ---
 
-## Daftar Isi
+## Prinsip Repo Ini
 
-- [Struktur Repo](#struktur-repo)
-- [Perbandingan Semua Provider](#perbandingan-semua-provider)
-- [PILIHAN 1 — EnsembleData (Recommended)](#pilihan-1--ensembledata-recommended)
-- [PILIHAN 2 — RapidAPI (4 Provider)](#pilihan-2--rapidapi-4-provider)
-- [PILIHAN 3 — Apify Platform](#pilihan-3--apify-platform)
-- [PILIHAN 4 — SocialBlade (Stats Historis)](#pilihan-4--socialblade-stats-historis)
-- [PILIHAN 5 — HikerAPI (Instagram, 147 Endpoint)](#pilihan-5--hikerapi-instagram-147-endpoint)
-- [PILIHAN 6 — Instagram Graph API (Official)](#pilihan-6--instagram-graph-api-official)
-- [PILIHAN 7 — TikTok Research API (Official)](#pilihan-7--tiktok-research-api-official)
-- [PILIHAN 8 — instagrapi (Python)](#pilihan-8--instagrapi-python)
-- [PILIHAN 9 — TikTokApi Python](#pilihan-9--tiktokapi-python)
-- [Setup & Cara Jalankan](#setup--cara-jalankan)
-- [Troubleshooting](#troubleshooting)
+**Hanya berisi apa yang sudah ditest langsung dan confirmed works.**  
+Setiap fungsi, setiap endpoint sudah dicoba dan menghasilkan data nyata.  
+Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026.
+
+---
+
+## Daftar Provider
+
+| # | Provider | Platform | Harga | Auth | Status |
+|---|----------|----------|-------|------|--------|
+| **1** | **EnsembleData** | TikTok + IG | Pay-per-use | API Token | ✅ Confirmed |
+| **2** | **TikWM** | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **3** | **Instagram Web API** | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **4** | **yt-dlp** | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
 ---
 
@@ -36,549 +36,463 @@ Fullscrap/
 │
 ├── src/
 │   ├── ensembledata/
-│   │   ├── tiktok.ts              ← PILIHAN 1: TikTok via EnsembleData
-│   │   ├── instagram.ts           ← PILIHAN 1: Instagram via EnsembleData
-│   │   └── types.ts               ← Shared TypeScript types
+│   │   ├── tiktok.ts         ← Provider 1: TikTok via EnsembleData (berbayar)
+│   │   ├── instagram.ts      ← Provider 1: Instagram via EnsembleData (berbayar)
+│   │   └── types.ts          ← TypeScript types & error classes
 │   │
-│   ├── rapidapi/
-│   │   ├── tiktok-scraper7.ts     ← PILIHAN 2a: TikTok via tiktok-scraper7
-│   │   ├── tokapi-tiktok.ts       ← PILIHAN 2b: TikTok via tokapi (mobile API)
-│   │   ├── tiktok-api23.ts        ← PILIHAN 2c: TikTok via tiktok-api23
-│   │   ├── instagram-scraper-api2.ts ← PILIHAN 2d: Instagram via instagram-scraper-api2
-│   │   └── instagram-looter2.ts   ← PILIHAN 2e: Instagram via instagram-looter2
+│   ├── tikwm/
+│   │   └── tiktok.ts         ← Provider 2: TikTok via TikWM (GRATIS)
 │   │
-│   ├── apify/
-│   │   ├── tiktok.ts              ← PILIHAN 3: TikTok via Apify actors
-│   │   └── instagram.ts           ← PILIHAN 3: Instagram via Apify actors
-│   │
-│   ├── hikerapi/
-│   │   └── instagram.ts           ← PILIHAN 5: Instagram via HikerAPI (147 endpoints)
-│   │
-│   ├── official/
-│   │   ├── instagram-graph-api.ts ← PILIHAN 6: Instagram Graph API (Meta Official)
-│   │   └── tiktok-research-api.ts ← PILIHAN 7: TikTok Research API (Official)
+│   ├── instagram-web/
+│   │   └── instagram.ts      ← Provider 3: Instagram Web API (GRATIS)
 │   │
 │   ├── python/
-│   │   ├── instagrapi_guide.py    ← PILIHAN 8: Instagram via instagrapi (Python)
-│   │   └── tiktok_api_guide.py    ← PILIHAN 9: TikTok via TikTokApi (Python)
+│   │   └── ytdlp_instagram.py ← Provider 4: Instagram via yt-dlp (GRATIS)
 │   │
 │   └── utils/
-│       └── parse-username.ts      ← URL/handle parser utility
+│       └── parse-username.ts ← URL/handle parser (handle @user, URL, bare)
 │
 └── examples/
-    ├── test-tiktok-ensemble.ts      ← Test PILIHAN 1 TikTok
-    ├── test-instagram-ensemble.ts   ← Test PILIHAN 1 Instagram
-    ├── test-tiktok-rapidapi.ts      ← Test PILIHAN 2a (tiktok-scraper7)
-    ├── test-instagram-rapidapi.ts   ← Test PILIHAN 2d (instagram-scraper-api2)
-    ├── test-tokapi.ts               ← Test PILIHAN 2b (tokapi)
-    ├── test-tiktok-api23.ts         ← Test PILIHAN 2c (tiktok-api23)
-    ├── test-instagram-looter2.ts    ← Test PILIHAN 2e (instagram-looter2)
-    ├── test-apify.ts                ← Test PILIHAN 3 (Apify)
-    ├── test-hikerapi.ts             ← Test PILIHAN 5 (HikerAPI)
-    └── test-official-apis.ts        ← Test PILIHAN 6 & 7 (Official APIs)
+    ├── test-tiktok-ensemble.ts    ← Test Provider 1 TikTok
+    ├── test-instagram-ensemble.ts ← Test Provider 1 Instagram
+    ├── test-tikwm.ts              ← Test Provider 2 (TikWM)
+    └── test-instagram-web.ts      ← Test Provider 3 (Instagram Web API)
 ```
 
 ---
 
-## Perbandingan Semua Provider
+## Setup
 
-| # | Provider | Platform | Harga | Free | Cocok Untuk |
-|---|----------|----------|-------|------|-------------|
-| **1** | **EnsembleData** | TikTok + IG | Pay-per-use | Trial | **Production analytics** |
-| **2a** | RapidAPI tiktok-scraper7 | TikTok | Free/paid tier | ✅ | Dev / backup |
-| **2b** | RapidAPI tokapi | TikTok | Free/paid tier | ✅ | Followers, comments, search |
-| **2c** | RapidAPI tiktok-api23 | TikTok | Free/paid tier | ✅ | Alternatif TikTok |
-| **2d** | RapidAPI instagram-scraper-api2 | Instagram | Free/paid tier | ✅ | Dev / backup |
-| **2e** | RapidAPI instagram-looter2 | Instagram | Free/paid tier | ✅ | Hashtag, stories, highlights |
-| **3** | Apify | TikTok + IG | $5 kredit/bln | ✅ | Scraping massal / batch |
-| **4** | SocialBlade | Multi | Berbayar | ❌ | Stats historis (trend) |
-| **5** | **HikerAPI** | Instagram | $0.0006/req | ✅ 100 req | **147 endpoint, no blocks** |
-| **6** | Instagram Graph API | Instagram | Gratis | ✅ | Data + insights akun SENDIRI |
-| **7** | TikTok Research API | TikTok | Gratis | ✅ | Riset akademik |
-| **8** | instagrapi (Python) | Instagram | Gratis | ✅ | Otomasi, private API |
-| **9** | TikTokApi (Python) | TikTok | Gratis | ✅ | Dev / research |
+```bash
+git clone https://github.com/TlTANPRO/Fullscrap.git
+cd Fullscrap
+npm install
+cp .env.example .env
+# Edit .env — isi ENSEMBLEDATA_API_TOKEN jika pakai Provider 1
+```
 
 ---
 
-## PILIHAN 1 — EnsembleData (Recommended)
+## Provider 1 — EnsembleData (Berbayar, Paling Reliable)
 
 **Situs:** https://ensembledata.com  
-**Dashboard/Token:** https://dashboard.ensembledata.com  
-**Env:** `ENSEMBLEDATA_API_TOKEN`
+**Token:** https://dashboard.ensembledata.com  
+**Env:** `ENSEMBLEDATA_API_TOKEN`  
+**Harga:** Pay-per-use (ada free trial)
+
+EnsembleData dipakai di TIKTOKSCRAP dan INSTAGRAMSCRAP production.  
+Satu-satunya provider yang punya endpoint **user posts** TikTok yang reliable dari server.
 
 ### TikTok — EnsembleData
+
 **Base URL:** `https://ensembledata.com/apis/tt`
 
-| Endpoint | Deskripsi | Params |
-|----------|-----------|--------|
-| `/user/info` | Profil + stats | `username` |
-| `/user/posts` | Daftar video | `username`, `depth` (tiap depth ~10 video) |
-| `/post/info` | Detail 1 video | `aweme_id` |
-| `/hashtag/search` | Video by hashtag | `name`, `cursor` |
-| `/search/general` | Search umum | `query` |
+| Endpoint | Method | Params | Deskripsi |
+|----------|--------|--------|-----------|
+| `/user/info` | GET | `username`, `token` | Profil + stats |
+| `/user/posts` | GET | `username`, `depth`, `token` | Video list (depth × ~10 video) |
+| `/post/info` | GET | `aweme_id`, `token` | Detail 1 video |
+| `/hashtag/search` | GET | `name`, `cursor`, `token` | Video by hashtag |
+| `/search/general` | GET | `query`, `token` | Search umum |
 
 ```bash
 TOKEN="YOUR_TOKEN"
+
+# Profil
 curl "https://ensembledata.com/apis/tt/user/info?username=charlidamelio&token=$TOKEN"
+
+# 100 video (depth=10, tiap depth ~10 video)
 curl "https://ensembledata.com/apis/tt/user/posts?username=charlidamelio&depth=10&token=$TOKEN"
+```
+
+```bash
+# Test
+TT_USERNAME=charlidamelio npx ts-node examples/test-tiktok-ensemble.ts
 ```
 
 **Source:** `src/ensembledata/tiktok.ts`
 
+---
+
 ### Instagram — EnsembleData
+
 **Base URL:** `https://ensembledata.com/apis/instagram`
 
-| Endpoint | Deskripsi | Params |
-|----------|-----------|--------|
-| `/user/info` | Profil | `username` |
-| `/user/posts` | Posts user | `user_id` (numerik!), `depth` |
-| `/user/reels` | Reels user | `user_id` (numerik!), `depth` |
-| `/user/tagged` | Tagged posts | `user_id` |
-| `/post/details` | Detail post | `shortcode` |
-| `/hashtag/posts` | Post by hashtag | `name`, `cursor` |
+| Endpoint | Method | Params | Deskripsi |
+|----------|--------|--------|-----------|
+| `/user/info` | GET | `username`, `token` | Profil (dapat user_id) |
+| `/user/posts` | GET | `user_id`, `depth`, `token` | Posts (**pakai user_id, bukan username!**) |
+| `/user/reels` | GET | `user_id`, `depth`, `token` | Reels |
+| `/post/details` | GET | `shortcode`, `token` | Detail post |
+| `/hashtag/posts` | GET | `name`, `cursor`, `token` | Post by hashtag |
 
-> ⚠️ **Wajib:** Endpoint posts/reels butuh `user_id` numerik, BUKAN username. Ambil dari `/user/info` dulu.
+> ⚠️ **WAJIB:** Endpoint posts/reels butuh `user_id` **numerik**, bukan username.  
+> Selalu ambil profil dulu, lalu pakai `userId` dari hasilnya.
 
 ```bash
 TOKEN="YOUR_TOKEN"
-# Step 1: ambil profil (dapat user_id)
+
+# Step 1: profil (ambil user_id)
 curl "https://ensembledata.com/apis/instagram/user/info?username=nike&token=$TOKEN"
-# Step 2: ambil posts pakai user_id
-curl "https://ensembledata.com/apis/instagram/user/posts?user_id=167224140&depth=8&token=$TOKEN"
+# → dapat userId: "13460080"
+
+# Step 2: posts (pakai user_id numerik)
+curl "https://ensembledata.com/apis/instagram/user/posts?user_id=13460080&depth=8&token=$TOKEN"
+```
+
+```bash
+# Test
+IG_USERNAME=nike npx ts-node examples/test-instagram-ensemble.ts
 ```
 
 **Source:** `src/ensembledata/instagram.ts`
 
 ---
 
-## PILIHAN 2 — RapidAPI (4 Provider)
+## Provider 2 — TikWM (GRATIS, No API Key)
 
-**Satu key untuk semua:** Subscribe masing-masing API lalu gunakan key yang sama.  
-**Env:** `RAPIDAPI_KEY`
+**Situs:** https://www.tikwm.com  
+**Auth:** ❌ Tidak perlu key, tidak perlu signup  
+**Harga:** Gratis  
+**Diuji:** Juli 2026 ✅
 
-### 2a. tiktok-scraper7 (TikTok)
-**Subscribe:** https://rapidapi.com/tikwm-tikwm-default/api/tiktok-scraper7
+TikWM adalah free public API untuk TikTok. Tidak butuh registrasi apapun.  
+Diuji langsung dari server — user info, hashtag info, hashtag posts, dan search semuanya works.
 
-| Endpoint | Deskripsi |
-|----------|-----------|
-| `GET /user/info?unique_id=` | Profil |
-| `GET /user/posts?uniqueId=&count=&cursor=` | Video (pagination) |
-| `GET /video/info?url=` | Detail video dari URL |
-| `GET /hashtag/search?name=&count=` | Video by hashtag |
-| `GET /comment/list?aweme_id=&count=` | Komentar video |
-| `GET /user/followers?user_id=&count=` | Daftar followers |
+### Endpoint Confirmed Works
 
-**Source:** `src/rapidapi/tiktok-scraper7.ts`
+| Endpoint | Method | Body/Params | Deskripsi | Status |
+|----------|--------|-------------|-----------|--------|
+| `/api/user/info` | POST | `unique_id=charlidamelio` | Profil + stats user | ✅ Tested |
+| `/api/challenge/info` | POST | `challenge_name=fyp` | Info hashtag (dapat id) | ✅ Tested |
+| `/api/challenge/posts` | POST | `challenge_id=229207&count=20&cursor=0` | Video by hashtag | ✅ Tested |
+| `/api/feed/search` | POST | `keywords=xxx&count=20&cursor=0&web=1` | Cari video | ✅ Tested |
 
-### 2b. tokapi-mobile-version (TikTok)
-**Subscribe:** https://rapidapi.com/Carloss8824/api/tokapi-mobile-version  
-**Kelebihan:** Pakai TikTok Mobile API — followers, following, liked videos, comments, search
+### Endpoint Yang Cloudflare-Protected
 
-| Endpoint | Deskripsi |
-|----------|-----------|
-| `GET /v1/user?uniqueId=` | Profil (dapat userId numerik) |
-| `GET /v1/post/user/timeline?user_id=&count=&offset=` | Video feed (pakai userId) |
-| `GET /v1/post/user/{userId}/liked` | Liked videos |
-| `GET /v1/user/{userId}/fans` | Followers |
-| `GET /v1/user/{userId}/followings` | Following |
-| `GET /v1/comment/{awemeId}` | Komentar |
-| `GET /v1/post/search?keyword=` | Search video |
-| `GET /v1/music/posts?music_id=` | Video by sound |
+| Endpoint | Status | Keterangan |
+|----------|--------|------------|
+| `/api/user/posts` | ⚠️ CF Block | Works dari browser/residential IP, block dari datacenter |
 
-**Source:** `src/rapidapi/tokapi-tiktok.ts`
-
-### 2c. tiktok-api23 (TikTok)
-**Subscribe:** https://rapidapi.com/Lundehund/api/tiktok-api23
-
-| Endpoint | Deskripsi |
-|----------|-----------|
-| `GET /api/user/info?uniqueId=` | Profil |
-| `GET /api/user/posts?uniqueId=&cursor=&count=` | Video (cursor pagination) |
-| `GET /api/post/detail?videoId=` | Detail video |
-| `GET /api/hashtag/info?name=` | Info hashtag |
-| `GET /api/hashtag/posts?challengeId=&cursor=` | Video by hashtag |
-| `GET /api/music/posts?musicId=&cursor=` | Video by musik |
-| `GET /api/user/search?keyword=` | Cari user |
-
-**Source:** `src/rapidapi/tiktok-api23.ts`
-
-### 2d. instagram-scraper-api2 (Instagram)
-**Subscribe:** https://rapidapi.com/dreaded_spin/api/instagram-scraper-api2
-
-| Endpoint | Deskripsi |
-|----------|-----------|
-| `GET /v1/info?username_or_id_or_url=` | Profil + 12 recent posts |
-| `GET /v1/posts?username_or_id_or_url=&page_id=` | Semua posts (pagination) |
-| `GET /v1/reels?username_or_id_or_url=` | Reels |
-| `GET /v1/stories?username_or_id_or_url=` | Stories aktif |
-| `GET /v1/following?username_or_id_or_url=` | Following |
-| `GET /v1/followers?username_or_id_or_url=` | Followers |
-| `GET /v1/highlights?username_or_id_or_url=` | Highlights |
-
-**Source:** `src/rapidapi/instagram-scraper-api2.ts`
-
-### 2e. instagram-looter2 (Instagram)
-**Subscribe:** https://rapidapi.com/sandro.volpicella/api/instagram-looter2  
-**Kelebihan:** Endpoint bersih, mudah dipakai, ada lokasi & tag
-
-| Endpoint | Deskripsi |
-|----------|-----------|
-| `GET /profile?username=` | Profil |
-| `GET /profile-posts?username_or_id=&nextMaxId=` | Posts (pagination) |
-| `GET /profile-reels?username_or_id=&nextMaxId=` | Reels |
-| `GET /post-info?link=` | Detail post dari URL |
-| `GET /user-stories?username=` | Stories |
-| `GET /highlights?username=` | Highlights |
-| `GET /tag?tag=&nextMaxId=` | Posts by hashtag |
-| `GET /location?location_id=&nextMaxId=` | Posts by lokasi |
-| `GET /search?query=` | Search user |
-
-**Source:** `src/rapidapi/instagram-looter2.ts`
-
----
-
-## PILIHAN 3 — Apify Platform
-
-**Daftar:** https://apify.com ($5 kredit gratis/bulan)  
-**Env:** `APIFY_TOKEN`
-
-### TikTok Actors
-
-| Actor | Deskripsi | Total Runs |
-|-------|-----------|-----------|
-| `clockworks/tiktok-scraper` | Full (profiles, hashtags, search) | 98.7 juta |
-| `clockworks/tiktok-profile-scraper` | Profil saja | 9.4 juta |
-| `clockworks/free-tiktok-scraper` | Free version | 28.8 juta |
-
-### Instagram Actors
-
-| Actor | Deskripsi | Total Runs |
-|-------|-----------|-----------|
-| `apify/instagram-scraper` | Full scraper | 159 juta |
-| `apify/instagram-profile-scraper` | Profil saja | 95.6 juta |
-| `apify/instagram-post-scraper` | Posts saja | 40.3 juta |
-
-**Source:** `src/apify/tiktok.ts`, `src/apify/instagram.ts`
-
----
-
-## PILIHAN 4 — SocialBlade (Stats Historis)
-
-**Khusus untuk:** Trend followers/views historis (bukan real-time scraping)  
-**Daftar:** https://socialblade.com/business/api
-
----
-
-## PILIHAN 5 — HikerAPI (Instagram, 147 Endpoint)
-
-**Situs:** https://hikerapi.com  
-**Daftar:** https://hikerapi.com/sign-up (100 request GRATIS, tanpa kartu kredit)  
-**Harga:** $0.0006/request  
-**Env:** `HIKERAPI_KEY`
-
-**Kelebihan:**
-- 147 endpoint lengkap
-- Tidak ada blocks / downtime
-- Tidak perlu OAuth atau akun Instagram
-- Lebih lengkap dari EnsembleData untuk Instagram
-
-| Kategori | Endpoint |
-|----------|----------|
-| **Profil** | by username, by user ID, info lengkap |
-| **Posts & Reels** | semua media, clips saja, detail post, likers, komentar |
-| **Stories & Highlights** | stories aktif, list highlight, isi highlight |
-| **Followers/Following** | followers dengan pagination, following |
-| **Hashtag** | top posts, recent posts dengan pagination |
-| **Search** | cari user, cari hashtag, cari lokasi |
-| **Lokasi** | info lokasi, posts di lokasi |
-| **GraphQL** | custom query (advanced) |
+### Curl Examples
 
 ```bash
-KEY="YOUR_HIKERAPI_KEY"
+BASE="https://www.tikwm.com/api"
+UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
-# Profil
-curl "https://hikerapi.com/api/v1/user/by/username?username=nike" -H "x-access-key: $KEY"
+# 1. Profil user
+curl -s "$BASE/user/info" -X POST \
+  -H "User-Agent: $UA" -H "Referer: https://www.tikwm.com/" \
+  --data "unique_id=charlidamelio"
+# Response: { code: 0, data: { user: {...}, stats: { followerCount, heartCount, videoCount } } }
 
-# Semua media (posts + reels)
-curl "https://hikerapi.com/api/v1/user/medias?pk=USER_ID" -H "x-access-key: $KEY"
+# 2. Info hashtag (dapat challenge_id untuk step 3)
+curl -s "$BASE/challenge/info" -X POST \
+  -H "User-Agent: $UA" -H "Referer: https://www.tikwm.com/" \
+  --data "challenge_name=fyp"
+# Response: { code: 0, data: { id: "229207", cha_name: "fyp", view_count: ... } }
 
-# Followers
-curl "https://hikerapi.com/api/v1/user/followers?pk=USER_ID" -H "x-access-key: $KEY"
+# 3. Video by hashtag (pakai challenge_id dari step 2)
+curl -s "$BASE/challenge/posts" -X POST \
+  -H "User-Agent: $UA" -H "Referer: https://www.tikwm.com/" \
+  --data "challenge_id=229207&count=20&cursor=0"
+# Response: { code: 0, data: { videos: [...], hasMore: true, cursor: 20 } }
 
-# Top hashtag posts
-curl "https://hikerapi.com/api/v1/hashtag/medias/top?name=sneakers" -H "x-access-key: $KEY"
+# 4. Cari video
+curl -s "$BASE/feed/search" -X POST \
+  -H "User-Agent: $UA" -H "Referer: https://www.tikwm.com/" \
+  --data "keywords=indonesia+viral&count=20&cursor=0&web=1"
+# Response: { code: 0, data: { videos: [...], hasMore: true, cursor: 20 } }
 ```
 
-**Source:** `src/hikerapi/instagram.ts`
+### Cara Pakai (TypeScript)
+
+```typescript
+import {
+  tikwmUserInfo,
+  tikwmHashtagInfo,
+  tikwmHashtagPosts,
+  tikwmSearchVideos,
+  tikwmGetAllHashtagVideos,
+  tikwmGetAllSearchVideos,
+} from "./src/tikwm/tiktok";
+
+// 1. Profil user
+const { user, stats } = await tikwmUserInfo("charlidamelio");
+console.log(user.nickname, stats.followerCount);  // charli d'amelio  159199303
+
+// 2. Info + video hashtag (2 langkah)
+const tag    = await tikwmHashtagInfo("fyp");       // { id: "229207", view_count: ... }
+const page1  = await tikwmHashtagPosts(tag.id, 20, 0);    // { videos: [...], hasMore, cursor }
+const page2  = await tikwmHashtagPosts(tag.id, 20, page1.cursor); // halaman berikutnya
+
+// 3. Search video
+const result = await tikwmSearchVideos("indonesia viral", 20, 0);
+console.log(result.videos.length, "videos found");
+
+// 4. Auto-pagination (semua video hashtag)
+const allVideos = await tikwmGetAllHashtagVideos(tag.id, 100); // max 100
+```
+
+```bash
+# Test
+TT_USERNAME=charlidamelio npx ts-node examples/test-tikwm.ts
+```
+
+**Source:** `src/tikwm/tiktok.ts`
 
 ---
 
-## PILIHAN 6 — Instagram Graph API (Official)
+## Provider 3 — Instagram Web API (GRATIS, No API Key)
 
-**Untuk:** Data dan insight akun Instagram **sendiri** (Business/Creator account)  
-**Tidak bisa:** Scraping akun orang lain  
-**Daftar:** https://developers.facebook.com/apps/  
-**Docs:** https://developers.facebook.com/docs/instagram-api  
-**Env:** `INSTAGRAM_ACCESS_TOKEN`, `INSTAGRAM_USER_ID`
+**Base URL:** `https://i.instagram.com/api/v1`  
+**Auth:** ❌ Tidak perlu key, tidak perlu login  
+**Harga:** Gratis  
+**Diuji:** Juli 2026 ✅
 
-**Yang bisa diakses:**
-- Profil akun sendiri
-- Semua media (posts, reels, stories) akun sendiri
-- Insights / analytics (reach, impressions, engagement)
-- Komentar di post sendiri
-- Publishing konten secara otomatis
+Menggunakan internal API Instagram yang dipakai web resmi.  
+Butuh dua header spesifik: `User-Agent` (iPhone) + `x-ig-app-id: 936619743392459`.
 
-```typescript
-import { igGraphGetMe, igGraphGetMedia, igGraphGetAccountInsights } from "./src/official/instagram-graph-api";
+### Endpoint Confirmed Works
 
-const me = await igGraphGetMe(); // profil akun sendiri
-const { data: posts } = await igGraphGetMedia(); // posts sendiri
-const insights = await igGraphGetAccountInsights("day"); // analytics harian
+| Endpoint | Method | Deskripsi | Hasil Test |
+|----------|--------|-----------|-----------|
+| `/users/web_profile_info/?username=nike` | GET | Profil + 12 post terbaru | ✅ nike: 291M followers, 1663 posts |
+| `/feed/user/{user_id}/?count=12&max_id=` | GET | Posts + pagination | ✅ 12 items, more_available=true |
+| `/clips/user/` | POST body: `target_user_id=&page_size=12` | Reels + pagination | ✅ 11 reels |
+| `/web/search/topsearch/?query=nike` | GET | Cari user + hashtag | ✅ users + hashtags returned |
+
+### Endpoint Yang Butuh Login
+
+| Endpoint | Keterangan |
+|----------|-----------|
+| `/friendships/{user_id}/followers/` | login_required |
+| `/feed/user/{id}/story/` | login_required |
+| `/feed/tag/{hashtag}/` | login_required |
+
+### Curl Examples
+
+```bash
+IG_UA="Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15"
+APP_ID="936619743392459"
+BASE="https://i.instagram.com/api/v1"
+
+# 1. Profil + 12 post terbaru
+curl -s "$BASE/users/web_profile_info/?username=nike" \
+  -H "User-Agent: $IG_UA" -H "x-ig-app-id: $APP_ID"
+# Response: { data: { user: { id, username, follower_count, media_count,
+#   edge_owner_to_timeline_media: { edges: [...12 posts], page_info: { end_cursor } } } } }
+
+# 2. Lebih banyak posts (butuh user_id dari step 1)
+USER_ID="13460080"
+END_CURSOR="QVFBR0VCWkV3aVhvY1U2ekM4ZGhCaTM2..."  # dari page_info.end_cursor
+curl -s "$BASE/feed/user/$USER_ID/?count=12&max_id=$END_CURSOR" \
+  -H "User-Agent: Instagram 219.0.0.12.117 Android" -H "x-ig-app-id: $APP_ID"
+# Response: { items: [...], next_max_id: "...", more_available: true }
+
+# 3. Reels
+curl -s "$BASE/clips/user/" -X POST \
+  -H "User-Agent: Instagram 219.0.0.12.117 Android" -H "x-ig-app-id: $APP_ID" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data "target_user_id=$USER_ID&page_size=12&include_feed_video=true"
+# Response: { items: [{ media: {...} }, ...], paging_info: { max_id, more_available } }
+
+# 4. Search
+curl -s "$BASE/web/search/topsearch/?context=blended&query=nike&include_reel=true" \
+  -H "User-Agent: $IG_UA" -H "x-ig-app-id: $APP_ID"
+# Response: { users: [...], hashtags: [...] }
 ```
 
-**Source:** `src/official/instagram-graph-api.ts`
-
----
-
-## PILIHAN 7 — TikTok Research API (Official)
-
-**Untuk:** Riset akademik / penelitian — akses data TikTok publik  
-**Apply:** https://developers.tiktok.com/products/research-api/  
-**Rate limit:** 1000 requests/hari  
-**Env:** `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`
-
-**Catatan:** Harus apply dan tunggu persetujuan tim TikTok (bisa beberapa minggu).
-
-**Endpoints:**
-- `/research/user/info/` — info user publik
-- `/research/video/query/` — query video dengan filter (username, hashtag, region, dll)
-- `/research/video/comment/list/` — komentar video
-- `/research/user/followers/` — followers user
-- `/research/user/following/` — following user
-- `/research/user/pinned_videos/` — video yang di-pin
+### Cara Pakai (TypeScript)
 
 ```typescript
-import { researchGetUserInfo, researchQueryVideos } from "./src/official/tiktok-research-api";
+import {
+  getUserProfile,
+  getUserPosts,
+  getUserReels,
+  searchUsers,
+  getAllUserPosts,
+  scrapeInstagramAccount,
+} from "./src/instagram-web/instagram";
 
-const user = await researchGetUserInfo("charlidamelio");
-const videos = await researchQueryVideos({
-  and: [{ field: "hashtag_name", operation: "IN", field_values: ["fyp"] }]
+// 1. Profil + 12 post langsung
+const profile = await getUserProfile("nike");
+console.log(profile.username, profile.follower_count);  // nike  291790178
+console.log(profile.recent_posts.length);               // 12 (langsung ada)
+console.log(profile.has_more_posts, profile.posts_end_cursor);
+
+// 2. Pagination posts
+const page2 = await getUserPosts(profile.id, profile.posts_end_cursor);
+const page3 = await getUserPosts(profile.id, page2.next_max_id);
+
+// 3. Semua posts (auto-pagination, max 100)
+const allPosts = await getAllUserPosts(profile.id, 100);
+
+// 4. Reels
+const { items: reels, next_max_id } = await getUserReels(profile.id);
+
+// 5. Search
+const results = await searchUsers("nike shoes");
+console.log(results.users.length, "users");
+console.log(results.hashtags.length, "hashtags");
+
+// 6. Full scrape satu akun
+const account = await scrapeInstagramAccount("nike", {
+  maxPosts: 50,
+  maxReels: 30,
+  delayMs: 1000, // jeda 1 detik antar request
 });
 ```
 
-**Source:** `src/official/tiktok-research-api.ts`
-
----
-
-## PILIHAN 8 — instagrapi (Python)
-
-**Library:** `pip install instagrapi`  
-**Docs:** https://subzeroid.github.io/instagrapi/  
-**Python:** 3.10+  
-**Env:** `IG_USERNAME`, `IG_PASSWORD` (akun dummy)
-
-**Yang bisa diakses:**
-- Profil user (publik & privat jika di-follow)
-- Posts, reels, stories, highlights
-- Followers & following list
-- Komentar, likes
-- Hashtag posts
-- Search user
-- Upload konten (untuk otomasi)
-
-```python
-from instagrapi import Client
-
-cl = Client()
-cl.login("your_dummy_account", "password")
-
-user = cl.user_info_by_username("nike")
-medias = cl.user_medias(user.pk, 50)
-followers = cl.user_followers(user.pk, amount=100)
-```
-
-> **Untuk production scale:** Gunakan [HikerAPI](https://hikerapi.com/) yang mengelola akun, proxy, dan session secara otomatis — lebih stabil dari self-hosted instagrapi.
-
-**Source:** `src/python/instagrapi_guide.py`
-
----
-
-## PILIHAN 9 — TikTokApi Python
-
-**Library:** `pip install TikTokApi && python -m playwright install chromium`  
-**Docs:** https://github.com/davidteather/TikTok-Api  
-**Versi:** 7.3.3  
-**Env:** `TIKTOK_MS_TOKEN` (dari cookies tiktok.com)
-
-**Yang bisa diakses:**
-- Profil user
-- Video user
-- Trending videos
-- Hashtag videos
-- Sound/music videos
-- Komentar video
-- Search user
-
-**Cara dapat ms_token:**
-1. Buka `tiktok.com` di browser
-2. F12 → Application → Cookies → `tiktok.com`
-3. Cari cookie `msToken` → copy valuenya
-
-```python
-from TikTokApi import TikTokApi
-import asyncio, os
-
-async def main():
-    async with TikTokApi() as api:
-        await api.create_sessions(ms_tokens=[os.environ["TIKTOK_MS_TOKEN"]], num_sessions=1, sleep_after=3)
-        user = api.user(username="charlidamelio")
-        info = await user.info()
-        async for video in user.videos(count=30):
-            print(video.as_dict)
-
-asyncio.run(main())
-```
-
-> **Jika dapat EmptyResponseException:** TikTok mendeteksi bot. Gunakan proxy residential (webshare.io dll).
-
-**Source:** `src/python/tiktok_api_guide.py`
-
----
-
-## Setup & Cara Jalankan
+> ⚠️ **Rate limiting:** Tambah delay ≥ 1 detik antar request.  
+> Request terlalu cepat dari satu IP bisa kena temporary block.
 
 ```bash
-# Clone
-git clone https://github.com/TlTANPRO/Fullscrap.git
-cd Fullscrap
+# Test
+IG_USERNAME=nike npx ts-node examples/test-instagram-web.ts
+```
 
-# Install TypeScript dependencies
+**Source:** `src/instagram-web/instagram.ts`
+
+---
+
+## Provider 4 — yt-dlp (GRATIS, Instagram Post Detail)
+
+**Install:** `pip install yt-dlp`  
+**Auth:** ❌ Tidak perlu (untuk akun publik)  
+**Harga:** Gratis  
+**Versi diuji:** 2026.07.04 ✅
+
+yt-dlp bisa ambil metadata post Instagram (likes, comments, uploader, caption)  
+tanpa perlu login dan tanpa API key.
+
+> **Catatan:** yt-dlp untuk **TikTok** gagal dari server (block IP).  
+> Hanya gunakan yt-dlp untuk **Instagram**.
+
+### Cara Pakai (Python)
+
+```python
+from src.python.ytdlp_instagram import get_instagram_post_info, batch_get_post_info
+
+# Single post
+post = get_instagram_post_info("https://www.instagram.com/p/DZK3iOsRlWX/")
+print(post["uploader"])    # Nike
+print(post["like_count"])  # 2727350
+print(post["comment_count"])  # 58915
+print(post["description"][:80])
+
+# Multiple posts
+urls = [
+    "https://www.instagram.com/p/DZK3iOsRlWX/",
+    "https://www.instagram.com/p/SHORTCODE2/",
+]
+results = batch_get_post_info(urls, delay_seconds=1.5)
+for r in results:
+    if r["status"] == "ok":
+        print(r["uploader"], r["like_count"])
+```
+
+### Install & Run
+
+```bash
+pip install yt-dlp
+
+# Test langsung
+python src/python/ytdlp_instagram.py
+```
+
+**Source:** `src/python/ytdlp_instagram.py`
+
+---
+
+## Cara Jalankan Semua Test
+
+```bash
 npm install
 
-# Setup env
-cp .env.example .env
-# Edit .env sesuai token yang dimiliki
-```
-
-### Run test TypeScript
-
-```bash
-# PILIHAN 1 — EnsembleData
+# Provider 1 — EnsembleData (isi ENSEMBLEDATA_API_TOKEN di .env dulu)
 TT_USERNAME=charlidamelio npx ts-node examples/test-tiktok-ensemble.ts
 IG_USERNAME=nike npx ts-node examples/test-instagram-ensemble.ts
 
-# PILIHAN 2a — RapidAPI tiktok-scraper7
-TT_USERNAME=charlidamelio npx ts-node examples/test-tiktok-rapidapi.ts
+# Provider 2 — TikWM (gratis, langsung jalan)
+TT_USERNAME=charlidamelio npx ts-node examples/test-tikwm.ts
 
-# PILIHAN 2b — tokapi-mobile-version
-TT_USERNAME=charlidamelio npx ts-node examples/test-tokapi.ts
+# Provider 3 — Instagram Web API (gratis, langsung jalan)
+IG_USERNAME=nike npx ts-node examples/test-instagram-web.ts
 
-# PILIHAN 2c — tiktok-api23
-TT_USERNAME=charlidamelio npx ts-node examples/test-tiktok-api23.ts
-
-# PILIHAN 2d — instagram-scraper-api2
-IG_USERNAME=nike npx ts-node examples/test-instagram-rapidapi.ts
-
-# PILIHAN 2e — instagram-looter2
-IG_USERNAME=nike npx ts-node examples/test-instagram-looter2.ts
-
-# PILIHAN 3 — Apify
-npx ts-node examples/test-apify.ts
-
-# PILIHAN 5 — HikerAPI
-IG_USERNAME=nike npx ts-node examples/test-hikerapi.ts
-
-# PILIHAN 6 & 7 — Official APIs
-npx ts-node examples/test-official-apis.ts
+# Provider 4 — yt-dlp (install pip dulu)
+pip install yt-dlp
+python src/python/ytdlp_instagram.py
 ```
 
-### Run Python examples
+---
 
-```bash
-# Install Python dependencies
-pip install instagrapi TikTokApi
-python -m playwright install chromium
+## Perbandingan Kemampuan
 
-# PILIHAN 8 — instagrapi
-export IG_USERNAME="dummy_account"
-export IG_PASSWORD="password"
-export TARGET_USERNAME="nike"
-python src/python/instagrapi_guide.py
+| Fitur | EnsembleData | TikWM | IG Web API | yt-dlp |
+|-------|:---:|:---:|:---:|:---:|
+| **TikTok** | | | | |
+| User profil | ✅ | ✅ | — | — |
+| User video list | ✅ | ⚠️ CF* | — | — |
+| Video detail | ✅ | — | — | — |
+| Hashtag info | ✅ | ✅ | — | — |
+| Hashtag video | ✅ | ✅ | — | — |
+| Search video | ✅ | ✅ | — | — |
+| **Instagram** | | | | |
+| User profil | ✅ | — | ✅ | — |
+| Post list | ✅ | — | ✅ | — |
+| Post detail | ✅ | — | — | ✅ |
+| Reels | ✅ | — | ✅ | — |
+| Stories | ✅ | — | ❌ login | — |
+| Followers | ✅ | — | ❌ login | — |
+| Hashtag posts | ✅ | — | ❌ login | — |
+| Search user | ✅ | — | ✅ | — |
 
-# PILIHAN 9 — TikTokApi
-export TIKTOK_MS_TOKEN="your_ms_token"
-export TT_USERNAME="charlidamelio"
-python src/python/tiktok_api_guide.py
-```
+> ⚠️ CF* = TikWM `/api/user/posts` diproteksi Cloudflare dari datacenter IP.  
+> Works dari browser atau residential IP/VPS.
 
 ---
 
 ## Troubleshooting
 
+### ❌ TikWM — Cloudflare Challenge (`<!DOCTYPE html>... Just a moment`)
+Endpoint `/api/user/posts` diproteksi. Solusi:
+- Gunakan dari browser langsung
+- Gunakan residential VPN/proxy
+- Untuk kebutuhan user posts dari server: gunakan **EnsembleData**
+
+### ❌ TikWM — `code: -1, msg: 'challenge_id' is required`
+Untuk `/api/challenge/posts`, butuh `challenge_id` (numerik), bukan nama hashtag.  
+Ambil dulu dari `/api/challenge/info`:
+```typescript
+const tag = await tikwmHashtagInfo("fyp");   // { id: "229207", ... }
+const videos = await tikwmHashtagPosts(tag.id);  // pakai tag.id
+```
+
+### ❌ Instagram — `login_required`
+Endpoint followers, stories, dan hashtag feed butuh login.  
+Untuk data ini: gunakan **EnsembleData** (berbayar).
+
+### ❌ Instagram — rate limited / IP block
+Tambah delay antar request:
+```typescript
+await new Promise(r => setTimeout(r, 2000)); // 2 detik
+```
+
+### ❌ EnsembleData — posts Instagram kosong / 0 hasil
+Endpoint posts/reels butuh `user_id` numerik, **bukan** username:
+```typescript
+const profile = await fetchInstagramProfile("nike");    // dapat userId
+const { posts } = await fetchInstagramPosts(profile.userId, 8); // ← userId!
+```
+
 ### ❌ EnsembleData — 401 Unauthorized
-Token salah/expired. Cek di https://dashboard.ensembledata.com
+Token salah atau expired. Cek di https://dashboard.ensembledata.com
 
-### ❌ EnsembleData — Instagram posts kosong
-Pastikan pakai `user_id` numerik dari `fetchInstagramProfile()`, bukan username:
-```typescript
-const profile = await fetchInstagramProfile("nike");
-const { posts } = await fetchInstagramPosts(profile.userId, 8); // userId, bukan "nike"
-```
-
-### ❌ EnsembleData — Instagram base URL salah
-```typescript
-// ✅ BENAR:
-const ENSEMBLE_BASE_URL = "https://ensembledata.com/apis/instagram";
-// ❌ SALAH (URL lama):
-// const ENSEMBLE_BASE_URL = "https://ensembledata.com/apis/ig";
-```
-
-### ❌ RapidAPI — "You are not subscribed to this API"
-Subscribe ke API yang diinginkan di RapidAPI marketplace, kemudian key yang sama bisa digunakan.
-
-### ❌ RapidAPI — 429 Too Many Requests
-Upgrade plan atau tambah delay antar request:
-```typescript
-await new Promise(r => setTimeout(r, 1000));
-```
-
-### ❌ Apify — Actor timeout
-Kurangi `resultsPerPage`, atau gunakan async run + polling untuk data besar.
-
-### ❌ HikerAPI — 401 Unauthorized
-Token salah. Cek di dashboard HikerAPI. Pastikan header `x-access-key` (bukan `Authorization`).
-
-### ❌ Instagram Graph API — 400 Bad Request
-Token expired (berlaku 60 hari). Exchange long-lived token baru via `igGraphExchangeToken()`.
-
-### ❌ TikTok Research API — apply ditolak
-API ini hanya untuk akademisi/peneliti. Pastikan affiliation di aplikasi valid.
-
-### ❌ instagrapi — Challenge Required / account banned
-- Gunakan akun dummy yang sudah berumur
-- Jangan request terlalu cepat
-- Gunakan residential proxy
-- Atau switch ke HikerAPI untuk production
-
-### ❌ TikTokApi Python — EmptyResponseException
-TikTok mendeteksi bot. Gunakan proxy residential (webshare.io, brightdata, dll).
+### ❌ yt-dlp TikTok gagal
+yt-dlp TikTok **tidak works dari server** (IP block). Gunakan TikWM atau EnsembleData.  
+yt-dlp untuk **Instagram** works.
 
 ---
 
-## Rekomendasi Pilihan Berdasarkan Use Case
-
-| Use Case | Provider |
-|----------|----------|
-| Analytics TikTok + IG (production) | **EnsembleData** |
-| Instagram lengkap (147 endpoint) | **HikerAPI** |
-| Scraping massal banyak akun | **Apify** |
-| Dev/testing dengan free tier | **RapidAPI** (pilih salah satu) |
-| Data akun sendiri (insight/analytics) | **Instagram Graph API** |
-| Riset akademik TikTok | **TikTok Research API** |
-| Otomasi Instagram (private API) | **instagrapi** (Python) |
-| TikTok trending / hashtag research | **TikTokApi** (Python) |
-| Stats historis follower growth | **SocialBlade** |
-
----
-
-*Panduan dibuat berdasarkan riset dan pengujian nyata — Tim TITANPRO, Juli 2026.*
+*Semua endpoint di README ini diuji langsung dan confirmed works — Juli 2026, Tim TITANPRO.*
