@@ -25,6 +25,8 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **5** | **tikmate.app** ★ BARU | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **6** | **savetik.co** ★ BARU | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **7** | **Instagram Android API** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **8** | **Perplexity Sonar** ★ BARU AI | TikTok + IG | API key (berbayar, murah) | OpenRouter key | ✅ Confirmed |
+| **9** | **Gemini Google Search** ★ BARU AI | TikTok + IG | Free tier / API key | Gemini key | ✅ Confirmed |
 
 > **Update Juli 2026 Batch 2 (terbaru):**
 > - TikWM: tikwmUserFollowing() — daftar following user by numeric user_id
@@ -55,6 +57,8 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | Post detail Instagram single | yt-dlp (P4) |
 | Stories / followers IG | EnsembleData (P1) — butuh login |
 | Reverse lookup user_id → username (IG) | Instagram Android (P7) igGetUserById(userId) BARU |
+| Profil IG/TT tanpa session (AI search) | Perplexity (P8) perplexityInstagramProfile() BARU |
+| Profil IG/TT via Google grounding (AI) | Gemini (P9) geminiInstagramProfile() BARU |
 
 ---
 
