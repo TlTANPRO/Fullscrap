@@ -10,15 +10,19 @@
  * Harga    : Gratis
  *
  * ─────────────────────────────────────────────────────────────
- * ENDPOINT YANG CONFIRMED WORKS (diuji langsung):
- *   POST /api/user/info     → profil user ✅
+ * ENDPOINT YANG CONFIRMED WORKS (diuji langsung Juli 2026):
+ *   POST /api/user/info      → profil user ✅
  *   POST /api/challenge/info → info hashtag ✅
  *   POST /api/challenge/posts → video by hashtag ✅
- *   POST /api/feed/search   → search video ✅
+ *   POST /api/feed/search    → search video ✅
+ *   POST /api/             → detail video by URL + download link ✅ BARU
+ *   POST /api/user/search    → cari user by keyword ⚠️ BARU (intermittent CF)
  *
  * ENDPOINT YANG CLOUDFLARE-PROTECTED (gagal dari datacenter IP):
- *   GET/POST /api/user/posts → Cloudflare challenge block dari server
- *   (works dari browser atau residential IP)
+ *   GET/POST /api/user/posts → Cloudflare block dari server
+ *   POST /api/user/search    → kadang Cloudflare block dari server
+ *   POST /api/related/item_list, /api/video/comment/list → Cloudflare block
+ *   (semua di atas works dari browser atau residential IP)
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -34,10 +38,12 @@ async function tikwmPost(path: string, body: Record<string, string | number>): P
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(body)) params.set(k, String(v));
 
+  // Gunakan URLSearchParams object (bukan .toString()) agar fetch auto-set
+  // Content-Type: application/x-www-form-urlencoded — wajib agar body ter-parse
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
     headers: DEFAULT_HEADERS,
-    body: params.toString(),
+    body: params,
   });
 
   const text = await res.text();
@@ -339,4 +345,183 @@ export async function tikwmGetAllSearchVideos(
   }
 
   return all.slice(0, maxVideos);
+}
+
+// ─── Endpoint Baru (Ditambahkan Juli 2026) ───────────────────────────────────
+
+export interface TikWMVideoDetail {
+  /** Video ID (sama dengan aweme_id) */
+  id: string;
+  /** Judul / deskripsi video */
+  title: string;
+  region: string;
+  /** Cover image URL */
+  cover: string;
+  /** Cover animated (AI generated) */
+  ai_dynamic_cover: string;
+  /** Cover original (tanpa watermark branding) */
+  origin_cover: string;
+  /** Durasi video dalam detik */
+  duration: number;
+  /** URL play video tanpa watermark — bisa langsung diakses */
+  play: string;
+  /** URL play dengan watermark */
+  wmplay: string;
+  /** URL HD tanpa watermark (kualitas terbaik) */
+  hdplay: string;
+  /** Ukuran file play dalam bytes */
+  size: number;
+  /** Ukuran file HD dalam bytes */
+  hd_size: number;
+  /** URL audio/musik terpisah */
+  music: string;
+  music_info: {
+    id: string;
+    title: string;
+    play: string;
+    cover: string;
+    author: string;
+    /** true jika musik asli si kreator (original sound) */
+    original: boolean;
+    duration: number;
+  };
+  play_count: number;
+  digg_count: number;    // likes
+  comment_count: number;
+  share_count: number;
+  download_count: number;
+  collect_count: number; // saves/bookmarks
+  /** Unix timestamp waktu upload */
+  create_time: number;
+  is_ad: boolean;
+  author: {
+    id: string;
+    unique_id: string;
+    nickname: string;
+    avatar: string;
+  };
+}
+
+export interface TikWMSearchUserResult {
+  user: {
+    id: string;
+    uniqueId: string;
+    nickname: string;
+    avatarThumb: string;
+    avatarMedium: string;
+    avatarLarger: string;
+    signature: string;
+    verified: boolean;
+    secUid: string;
+    privateAccount: boolean;
+  };
+  stats: {
+    followerCount: number;
+    followingCount: number;
+    heartCount: number;
+    videoCount: number;
+    diggCount: number;
+  };
+}
+
+/**
+ * Ambil detail lengkap satu video TikTok berdasarkan URL.
+ * CONFIRMED WORKS — diuji: Juli 2026 ✅
+ *
+ * Endpoint ini mengembalikan metadata video PLUS URL download tanpa watermark.
+ * Endpoint yang dipakai: POST https://www.tikwm.com/api/
+ *
+ * @param tiktokUrl - URL video TikTok lengkap
+ *                    Contoh: "https://www.tiktok.com/@mrbeast/video/7370428688920396075"
+ *
+ * @example
+ * const detail = await tikwmVideoByUrl("https://www.tiktok.com/@mrbeast/video/7370428688920396075");
+ * console.log(detail.title, detail.play_count);
+ * console.log(detail.play);    // URL download no-watermark
+ * console.log(detail.hdplay);  // URL download HD no-watermark
+ */
+export async function tikwmVideoByUrl(tiktokUrl: string): Promise<TikWMVideoDetail> {
+  // Path "/" → BASE_URL + "/" = "https://www.tikwm.com/api/"
+  // Jangan pakai "/api/" — itu akan jadi double-path (/api/api/)
+  const raw = (await tikwmPost("/", {
+    url: tiktokUrl,
+    hd: 1,
+  })) as {
+    code: number;
+    msg: string;
+    data: TikWMVideoDetail;
+  };
+
+  if (raw.code !== 0) {
+    throw new Error(
+      `TikWM video by URL error: ${raw.msg} (code ${raw.code}). URL: ${tiktokUrl}`
+    );
+  }
+
+  return raw.data;
+}
+
+/**
+ * Cari user TikTok berdasarkan keyword.
+ * CONFIRMED WORKS saat diuji manual — Juli 2026.
+ * ⚠️ Kadang terkena Cloudflare intermittent dari datacenter IP.
+ *
+ * @param keywords - Kata kunci pencarian (nama, nickname, handle)
+ * @param count    - Jumlah hasil (default 10)
+ * @param cursor   - Cursor pagination (mulai dari 0)
+ *
+ * @example
+ * const { users } = await tikwmSearchUsers("mrbeast", 5);
+ * for (const r of users) {
+ *   console.log(r.user.uniqueId, r.stats.followerCount);
+ * }
+ */
+export async function tikwmSearchUsers(
+  keywords: string,
+  count = 10,
+  cursor = 0
+): Promise<{ users: TikWMSearchUserResult[]; hasMore: boolean; cursor: number }> {
+  const raw = (await tikwmPost("/user/search", {
+    keywords,
+    count,
+    cursor,
+  })) as {
+    code: number;
+    msg: string;
+    data: {
+      user_list: Array<{
+        user: TikWMSearchUserResult["user"];
+        stats: TikWMSearchUserResult["stats"];
+      }>;
+      cursor: number;
+      has_more: boolean;
+    };
+  };
+
+  if (raw.code !== 0) {
+    throw new Error(`TikWM user/search error: ${raw.msg} (code ${raw.code})`);
+  }
+
+  const users: TikWMSearchUserResult[] = (raw.data?.user_list ?? []).map(item => ({
+    user: item.user,
+    stats: item.stats,
+  }));
+
+  return {
+    users,
+    hasMore: raw.data?.has_more ?? false,
+    cursor: raw.data?.cursor ?? 0,
+  };
+}
+
+/**
+ * Helper: build TikTok video URL dari uniqueId + videoId.
+ * Berguna untuk mempersiapkan input ke tikwmVideoByUrl().
+ *
+ * @example
+ * const url = buildTikTokVideoUrl("mrbeast", "7370428688920396075");
+ * const detail = await tikwmVideoByUrl(url);
+ */
+export function buildTikTokVideoUrl(uniqueId: string, videoId: string): string {
+  return `https://www.tiktok.com/@${uniqueId}/video/${videoId}`;
 }

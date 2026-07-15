@@ -23,6 +23,9 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **3** | **Instagram Web API** | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **4** | **yt-dlp** | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
+> **Update Juli 2026:** 2 endpoint baru di Provider 2 (TikWM): `tikwmVideoByUrl()` dan `tikwmSearchUsers()`.  
+> Lihat bagian Provider 2 untuk detail dan contoh kode.
+
 ---
 
 ## Struktur Repo
@@ -55,7 +58,8 @@ Fullscrap/
 └── examples/
     ├── test-tiktok-ensemble.ts    ← Test Provider 1 TikTok
     ├── test-instagram-ensemble.ts ← Test Provider 1 Instagram
-    ├── test-tikwm.ts              ← Test Provider 2 (TikWM)
+    ├── test-tikwm.ts              ← Test Provider 2 (TikWM — endpoint lama)
+    ├── test-tikwm-extended.ts     ← Test Provider 2 (TikWM — endpoint BARU) ★
     └── test-instagram-web.ts      ← Test Provider 3 (Instagram Web API)
 ```
 
@@ -167,12 +171,17 @@ Diuji langsung dari server — user info, hashtag info, hashtag posts, dan searc
 | `/api/challenge/info` | POST | `challenge_name=fyp` | Info hashtag (dapat id) | ✅ Tested |
 | `/api/challenge/posts` | POST | `challenge_id=229207&count=20&cursor=0` | Video by hashtag | ✅ Tested |
 | `/api/feed/search` | POST | `keywords=xxx&count=20&cursor=0&web=1` | Cari video | ✅ Tested |
+| `/api/` | POST | `url=https://www.tiktok.com/@user/video/ID&hd=1` | Detail video + URL download no-WM | ✅ **BARU** |
+| `/api/user/search` | POST | `keywords=mrbeast&count=10&cursor=0` | Cari user by keyword | ⚠️ **BARU** (intermittent CF) |
 
-### Endpoint Yang Cloudflare-Protected
+### Endpoint Yang Cloudflare-Protected (dari datacenter IP)
 
 | Endpoint | Status | Keterangan |
 |----------|--------|------------|
-| `/api/user/posts` | ⚠️ CF Block | Works dari browser/residential IP, block dari datacenter |
+| `/api/user/posts` | ❌ CF Block | Works dari browser/residential IP |
+| `/api/user/search` | ⚠️ Intermittent | Kadang block dari datacenter, works saat diuji manual |
+| `/api/related/item_list` | ❌ CF Block | Video related — blocked |
+| `/api/video/comment/list` | ❌ CF Block | Komentar video — blocked |
 
 ### Curl Examples
 
@@ -203,6 +212,20 @@ curl -s "$BASE/feed/search" -X POST \
   -H "User-Agent: $UA" -H "Referer: https://www.tikwm.com/" \
   --data "keywords=indonesia+viral&count=20&cursor=0&web=1"
 # Response: { code: 0, data: { videos: [...], hasMore: true, cursor: 20 } }
+
+# 5. ★ BARU: Detail video + URL download no-watermark
+curl -s "https://www.tikwm.com/api/" -X POST \
+  -H "User-Agent: $UA" -H "Referer: https://www.tikwm.com/" \
+  --data "url=https%3A%2F%2Fwww.tiktok.com%2F%40mrbeast%2Fvideo%2F7370428688920396075&hd=1"
+# Response: { code: 0, data: { id, title, play_count, digg_count, play, hdplay, cover, ... } }
+# "play"   → URL video TANPA watermark (langsung bisa diakses/didownload)
+# "hdplay" → URL video HD TANPA watermark
+
+# 6. ★ BARU: Cari user by keyword
+curl -s "$BASE/user/search" -X POST \
+  -H "User-Agent: $UA" -H "Referer: https://www.tikwm.com/" \
+  --data "keywords=mrbeast&count=10&cursor=0"
+# Response: { code: 0, data: { user_list: [{ user: {uniqueId, nickname, verified}, stats: {followerCount,...} }] } }
 ```
 
 ### Cara Pakai (TypeScript)
@@ -215,6 +238,10 @@ import {
   tikwmSearchVideos,
   tikwmGetAllHashtagVideos,
   tikwmGetAllSearchVideos,
+  // ★ BARU (Juli 2026):
+  tikwmVideoByUrl,
+  tikwmSearchUsers,
+  buildTikTokVideoUrl,
 } from "./src/tikwm/tiktok";
 
 // 1. Profil user
@@ -222,21 +249,40 @@ const { user, stats } = await tikwmUserInfo("charlidamelio");
 console.log(user.nickname, stats.followerCount);  // charli d'amelio  159199303
 
 // 2. Info + video hashtag (2 langkah)
-const tag    = await tikwmHashtagInfo("fyp");       // { id: "229207", view_count: ... }
-const page1  = await tikwmHashtagPosts(tag.id, 20, 0);    // { videos: [...], hasMore, cursor }
-const page2  = await tikwmHashtagPosts(tag.id, 20, page1.cursor); // halaman berikutnya
+const tag    = await tikwmHashtagInfo("fyp");
+const page1  = await tikwmHashtagPosts(tag.id, 20, 0);
+const page2  = await tikwmHashtagPosts(tag.id, 20, page1.cursor);
 
 // 3. Search video
 const result = await tikwmSearchVideos("indonesia viral", 20, 0);
-console.log(result.videos.length, "videos found");
 
-// 4. Auto-pagination (semua video hashtag)
-const allVideos = await tikwmGetAllHashtagVideos(tag.id, 100); // max 100
+// 4. Auto-pagination
+const allVideos = await tikwmGetAllHashtagVideos(tag.id, 100);
+
+// ★ 5. BARU: Detail video + URL download by URL
+const videoUrl = buildTikTokVideoUrl("mrbeast", "7370428688920396075");
+const detail   = await tikwmVideoByUrl(videoUrl);
+console.log(detail.title);           // judul video
+console.log(detail.play_count);      // jumlah play
+console.log(detail.digg_count);      // likes
+console.log(detail.comment_count);   // komentar
+console.log(detail.play);            // URL video TANPA watermark ← berguna
+console.log(detail.hdplay);          // URL video HD tanpa watermark
+console.log(detail.cover);           // thumbnail
+console.log(detail.music_info.title); // judul musik
+
+// ★ 6. BARU: Cari user by keyword
+const { users } = await tikwmSearchUsers("mrbeast", 10);
+for (const r of users) {
+  console.log(r.user.uniqueId, r.user.verified, r.stats.followerCount);
+}
 ```
 
 ```bash
-# Test
-TT_USERNAME=charlidamelio npx ts-node examples/test-tikwm.ts
+# Test endpoint lama
+npm run test:tikwm
+# Test endpoint baru
+npm run test:tikwm-extended
 ```
 
 **Source:** `src/tikwm/tiktok.ts`
@@ -411,18 +457,22 @@ python src/python/ytdlp_instagram.py
 npm install
 
 # Provider 1 — EnsembleData (isi ENSEMBLEDATA_API_TOKEN di .env dulu)
-TT_USERNAME=charlidamelio npx ts-node examples/test-tiktok-ensemble.ts
-IG_USERNAME=nike npx ts-node examples/test-instagram-ensemble.ts
+TT_USERNAME=charlidamelio npm run test:tiktok-ensemble
+IG_USERNAME=nike npm run test:instagram-ensemble
 
 # Provider 2 — TikWM (gratis, langsung jalan)
-TT_USERNAME=charlidamelio npx ts-node examples/test-tikwm.ts
+npm run test:tikwm                 # endpoint lama (user info, hashtag, search)
+npm run test:tikwm-extended        # ★ endpoint baru (videoByUrl, searchUsers)
 
 # Provider 3 — Instagram Web API (gratis, langsung jalan)
-IG_USERNAME=nike npx ts-node examples/test-instagram-web.ts
+IG_USERNAME=nike npm run test:instagram-web
 
 # Provider 4 — yt-dlp (install pip dulu)
 pip install yt-dlp
 python src/python/ytdlp_instagram.py
+
+# Semua provider gratis sekaligus
+npm run test:all-free
 ```
 
 ---

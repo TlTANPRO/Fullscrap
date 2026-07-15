@@ -6,16 +6,17 @@
   "scripts": {
     "test:tiktok-ensemble": "ts-node examples/test-tiktok-ensemble.ts",
     "test:instagram-ensemble": "ts-node examples/test-instagram-ensemble.ts",
-    "test:tiktok-rapidapi": "ts-node examples/test-tiktok-rapidapi.ts",
-    "test:instagram-rapidapi": "ts-node examples/test-instagram-rapidapi.ts",
-    "test:apify": "ts-node examples/test-apify.ts",
+    "test:tikwm": "ts-node examples/test-tikwm.ts",
+    "test:tikwm-extended": "ts-node examples/test-tikwm-extended.ts",
+    "test:instagram-web": "ts-node examples/test-instagram-web.ts",
+    "test:all-free": "ts-node examples/test-tikwm.ts && ts-node examples/test-tikwm-extended.ts && ts-node examples/test-instagram-web.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "^22.20.1",
     "ts-node": "^10.9.2",
     "typescript": "~5.5.4"
   }
