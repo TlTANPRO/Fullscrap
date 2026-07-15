@@ -9,7 +9,13 @@
     "test:tikwm": "ts-node examples/test-tikwm.ts",
     "test:tikwm-extended": "ts-node examples/test-tikwm-extended.ts",
     "test:instagram-web": "ts-node examples/test-instagram-web.ts",
-    "test:all-free": "ts-node examples/test-tikwm.ts && ts-node examples/test-tikwm-extended.ts && ts-node examples/test-instagram-web.ts",
+    "test:tikmate": "ts-node examples/test-tikmate.ts",
+    "test:savetik": "ts-node examples/test-savetik.ts",
+    "test:instagram-android": "ts-node examples/test-instagram-android.ts",
+    "test:tiktok-oembed": "ts-node examples/test-tiktok-oembed.ts",
+    "test:tiktok-rapidapi": "ts-node examples/test-tiktok-rapidapi.ts",
+    "test:instaloader": "python3 examples/test-instaloader.py",
+    "test:all-free": "ts-node examples/test-tikwm.ts && ts-node examples/test-tikwm-extended.ts && ts-node examples/test-instagram-web.ts && ts-node examples/test-tikmate.ts && ts-node examples/test-savetik.ts && ts-node examples/test-instagram-android.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

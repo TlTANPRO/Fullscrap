@@ -22,9 +22,31 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **2** | **TikWM** | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **3** | **Instagram Web API** | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **4** | **yt-dlp** | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **5** | **tikmate.app** ★ BARU | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **6** | **savetik.co** ★ BARU | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **7** | **Instagram Android API** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
-> **Update Juli 2026:** 2 endpoint baru di Provider 2 (TikWM): `tikwmVideoByUrl()` dan `tikwmSearchUsers()`.  
-> Lihat bagian Provider 2 untuk detail dan contoh kode.
+> **Update Juli 2026 (terbaru):**
+> - ★ **Provider 5** — tikmate.app: metadata TikTok (author, stats, cover) via JSON API
+> - ★ **Provider 6** — savetik.co: download links (MP4 / HD / MP3) tanpa watermark
+> - ★ **Provider 7** — Instagram Android API: reels + **play count** via clips/user endpoint
+> - Provider 2 (TikWM): 2 endpoint baru — `tikwmVideoByUrl()` dan `tikwmSearchUsers()`
+
+---
+
+## Provider Mana yang Dipakai Untuk Apa?
+
+| Kebutuhan | Provider Terbaik |
+|-----------|-----------------|
+| User posts TikTok dari server | EnsembleData (P1) — satu-satunya reliable |
+| Download video TikTok no-WM | savetik.co (P6) atau TikWM `videoByUrl` (P2) |
+| Metadata video TikTok single | tikmate.app (P5) atau TikWM (P2) |
+| Hashtag / trending TikTok | TikWM (P2) |
+| Profil Instagram | IG Web API (P3) atau IG Android (P7) |
+| Posts Instagram + pagination | IG Android (P7) `getPostsFeed()` |
+| Reels Instagram + **play count** | IG Android (P7) `getReelsFeed()` ← **TERPENTING** |
+| Post detail Instagram single | yt-dlp (P4) |
+| Stories / followers IG | EnsembleData (P1) — butuh login |
 
 ---
 
@@ -39,28 +61,52 @@ Fullscrap/
 │
 ├── src/
 │   ├── ensembledata/
-│   │   ├── tiktok.ts         ← Provider 1: TikTok via EnsembleData (berbayar)
-│   │   ├── instagram.ts      ← Provider 1: Instagram via EnsembleData (berbayar)
-│   │   └── types.ts          ← TypeScript types & error classes
+│   │   ├── tiktok.ts              ← P1: TikTok via EnsembleData (berbayar)
+│   │   ├── instagram.ts           ← P1: Instagram via EnsembleData (berbayar)
+│   │   └── types.ts               ← TypeScript types & error classes
 │   │
 │   ├── tikwm/
-│   │   └── tiktok.ts         ← Provider 2: TikTok via TikWM (GRATIS)
+│   │   └── tiktok.ts              ← P2: TikTok via TikWM (GRATIS)
 │   │
 │   ├── instagram-web/
-│   │   └── instagram.ts      ← Provider 3: Instagram Web API (GRATIS)
+│   │   └── instagram.ts           ← P3: Instagram Web API (GRATIS)
 │   │
 │   ├── python/
-│   │   └── ytdlp_instagram.py ← Provider 4: Instagram via yt-dlp (GRATIS)
+│   │   └── ytdlp_instagram.py     ← P4: Instagram via yt-dlp (GRATIS)
+│   │
+│   ├── tikmate/
+│   │   └── tiktok.ts              ← P5: TikTok metadata via tikmate.app ★ BARU
+│   │
+│   ├── savetik/
+│   │   └── tiktok.ts              ← P6: TikTok download links via savetik.co ★ BARU
+│   │
+│   ├── instagram-android/
+│   │   └── instagram.ts           ← P7: Instagram Android API (play count!) ★ BARU
+│   │
+│   ├── tiktok-oembed/
+│   │   └── tiktok.ts              ← TikTok oEmbed (❌ BLOCKED dari datacenter)
+│   │
+│   ├── tiktok-rapidapi/
+│   │   └── tiktok.ts              ← TikTok via RapidAPI (⚠️ belum ditest, butuh key)
+│   │
+│   ├── instaloader/
+│   │   └── instagram.py           ← Instagram via instaloader (⚠️ belum ditest)
 │   │
 │   └── utils/
-│       └── parse-username.ts ← URL/handle parser (handle @user, URL, bare)
+│       └── parse-username.ts      ← URL/handle parser
 │
 └── examples/
-    ├── test-tiktok-ensemble.ts    ← Test Provider 1 TikTok
-    ├── test-instagram-ensemble.ts ← Test Provider 1 Instagram
-    ├── test-tikwm.ts              ← Test Provider 2 (TikWM — endpoint lama)
-    ├── test-tikwm-extended.ts     ← Test Provider 2 (TikWM — endpoint BARU) ★
-    └── test-instagram-web.ts      ← Test Provider 3 (Instagram Web API)
+    ├── test-tiktok-ensemble.ts    ← Test P1 TikTok
+    ├── test-instagram-ensemble.ts ← Test P1 Instagram
+    ├── test-tikwm.ts              ← Test P2 endpoint lama
+    ├── test-tikwm-extended.ts     ← Test P2 endpoint BARU ★
+    ├── test-instagram-web.ts      ← Test P3
+    ├── test-tikmate.ts            ← Test P5 ★ BARU
+    ├── test-savetik.ts            ← Test P6 ★ BARU
+    ├── test-instagram-android.ts  ← Test P7 ★ BARU
+    ├── test-tiktok-oembed.ts      ← Test oEmbed (❌ blocked dari datacenter)
+    ├── test-tiktok-rapidapi.ts    ← Test RapidAPI (⚠️ perlu RAPIDAPI_KEY)
+    └── test-instaloader.py        ← Test instaloader (⚠️ perlu pip)
 ```
 
 ---
@@ -471,35 +517,275 @@ IG_USERNAME=nike npm run test:instagram-web
 pip install yt-dlp
 python src/python/ytdlp_instagram.py
 
-# Semua provider gratis sekaligus
+# ★ Provider 5 — tikmate.app (gratis, langsung jalan)
+npm run test:tikmate
+
+# ★ Provider 6 — savetik.co (gratis, butuh curl tersedia di system)
+npm run test:savetik
+
+# ★ Provider 7 — Instagram Android API (gratis, butuh user_id)
+npm run test:instagram-android
+# Atau dengan user_id spesifik:
+IG_USER_ID=183250726 npm run test:instagram-android   # @charlidamelio
+IG_USER_ID=25025320 npm run test:instagram-android    # @instagram
+
+# Semua provider gratis sekaligus (P2 + P3 + P5 + P6 + P7)
 npm run test:all-free
+
+# Test provider eksperimental (⚠️ bisa fail)
+npm run test:tiktok-oembed        # ❌ blocked dari datacenter IP
+RAPIDAPI_KEY=xxx npm run test:tiktok-rapidapi  # ⚠️ butuh key
+npm run test:instaloader          # ⚠️ butuh pip install
 ```
 
 ---
 
 ## Perbandingan Kemampuan
 
-| Fitur | EnsembleData | TikWM | IG Web API | yt-dlp |
-|-------|:---:|:---:|:---:|:---:|
-| **TikTok** | | | | |
-| User profil | ✅ | ✅ | — | — |
-| User video list | ✅ | ⚠️ CF* | — | — |
-| Video detail | ✅ | — | — | — |
-| Hashtag info | ✅ | ✅ | — | — |
-| Hashtag video | ✅ | ✅ | — | — |
-| Search video | ✅ | ✅ | — | — |
-| **Instagram** | | | | |
-| User profil | ✅ | — | ✅ | — |
-| Post list | ✅ | — | ✅ | — |
-| Post detail | ✅ | — | — | ✅ |
-| Reels | ✅ | — | ✅ | — |
-| Stories | ✅ | — | ❌ login | — |
-| Followers | ✅ | — | ❌ login | — |
-| Hashtag posts | ✅ | — | ❌ login | — |
-| Search user | ✅ | — | ✅ | — |
+| Fitur | EnsembleData | TikWM | tikmate ★ | savetik ★ | IG Web | IG Android ★ | yt-dlp |
+|-------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **TikTok** | | | | | | | |
+| User profil | ✅ | ✅ | — | — | — | — | — |
+| User video list | ✅ | ⚠️ CF* | — | — | — | — | — |
+| Video metadata | ✅ | ✅ | ✅ | — | — | — | — |
+| Video download | — | ✅ | ✅** | ✅ | — | — | — |
+| Hashtag info/video | ✅ | ✅ | — | — | — | — | — |
+| Search video | ✅ | ✅ | — | — | — | — | — |
+| **Instagram** | | | | | | | |
+| User profil | ✅ | — | — | — | ✅ | — | — |
+| Posts list | ✅ | — | — | — | ✅ | ✅ | — |
+| Reels list | ✅ | — | — | — | ✅ | ✅ | — |
+| Reels **play count** | ✅ | — | — | — | ⚠️ | **✅** | — |
+| Post detail | ✅ | — | — | — | — | — | ✅ |
+| Stories | ✅ | — | — | — | ❌ | ❌ | — |
+| Followers | ✅ | — | — | — | ❌ | ❌ | — |
+| Search user | ✅ | — | — | — | ✅ | — | — |
 
-> ⚠️ CF* = TikWM `/api/user/posts` diproteksi Cloudflare dari datacenter IP.  
-> Works dari browser atau residential IP/VPS.
+> ⚠️ CF* = TikWM `/api/user/posts` CF-protected dari datacenter. Works dari browser/residential.  
+> ✅** tikmate: download via token (`https://api.tikmate.app/download?token=…` → 302 ke CDN)
+
+---
+
+## Provider 5 — tikmate.app (GRATIS, No API Key) ★ BARU
+
+**Situs:** https://tikmate.app  
+**API:** `https://api.tikmate.app/api/lookup` (POST)  
+**Auth:** ❌ Tidak perlu  
+**Harga:** Gratis  
+**Diuji:** Juli 2026 ✅
+
+Menyediakan JSON metadata video TikTok langsung dari server. Berbeda dari TikTok oEmbed
+yang **diblokir dari datacenter IP** — tikmate.app works dari mana saja.
+
+### Confirmed Works
+
+| Fungsi | Deskripsi | Status |
+|--------|-----------|--------|
+| `tikmateVideoInfo(url)` | author, desc, like/comment/share count, cover, create_time | ✅ Tested |
+| `tikmateDownloadUrl(token)` | URL download no-watermark (302 → CDN) | ✅ Tested |
+| `tikmateResolveCdnUrl(token)` | Follow redirect → CDN URL langsung | ✅ Tested |
+| `tikmateBatch(urls[])` | Batch metadata banyak video | ✅ Tested |
+
+### Limitation
+
+- Video lama (2022-2023) atau yang sudah dihapus → `null` dikembalikan
+- Video baru (2024-2026) umumnya works
+- Tidak menyediakan: daftar video user, trending, search
+
+### Cara Pakai (TypeScript)
+
+```typescript
+import {
+  tikmateVideoInfo,
+  tikmateDownloadUrl,
+  tikmateResolveCdnUrl,
+  tikmateBatch,
+} from "./src/tikmate/tiktok";
+
+// Single video
+const info = await tikmateVideoInfo(
+  "https://www.tiktok.com/@charlidamelio/video/7662660254328556821"
+);
+if (!info) {
+  console.log("Video tidak ditemukan / dihapus");
+} else {
+  console.log(info.author_id);       // "charlidamelio"
+  console.log(info.author_name);     // "charli d'amelio"
+  console.log(info.like_count);      // 556
+  console.log(info.comment_count);   // 73
+  console.log(info.share_count);     // 134
+  console.log(info.desc);            // caption
+  console.log(info.create_time);     // "Jul 15, 2026"
+  console.log(info.cover);           // URL thumbnail
+
+  // Download URL
+  const dlUrl = tikmateDownloadUrl(info.token);
+  // → "https://api.tikmate.app/download?token=..." (302-redirect ke CDN)
+  
+  // Atau resolve CDN URL langsung
+  const cdnUrl = await tikmateResolveCdnUrl(info.token);
+  // → "https://wrath.nowmvideo.com:8443/download?token=..."
+}
+
+// Batch
+const results = await tikmateBatch([url1, url2, url3], 400);
+const found = results.filter(r => r !== null);
+```
+
+```bash
+npm run test:tikmate
+```
+
+**Source:** `src/tikmate/tiktok.ts`
+
+---
+
+## Provider 6 — savetik.co (GRATIS, Download Links) ★ BARU
+
+**Situs:** https://savetik.co  
+**API:** `https://savetik.co/api/ajaxSearch` (POST)  
+**Auth:** ❌ Tidak perlu  
+**Harga:** Gratis  
+**Diuji:** Juli 2026 ✅
+
+Memberikan link download untuk setiap video TikTok: MP4 tanpa watermark, MP4 HD, dan MP3.
+
+> **Implementasi:** savetik.co menggunakan Cloudflare TLS fingerprinting.  
+> Node.js `fetch()` mendapat 403. Kode ini menggunakan `curl` via `child_process`  
+> untuk bypass (curl dikenali CF sebagai normal). curl harus tersedia di server.
+
+### Confirmed Works
+
+| Fungsi | Output | Status |
+|--------|--------|--------|
+| `savetikVideoInfo(url)` | `{ video_id, title, thumbnail, links[] }` | ✅ Tested |
+| `savetikGetLinks(url)` | `[{ label, url }]` — MP4, MP4 HD, MP3 | ✅ Tested |
+| `savetikBatch(urls[])` | Batch download links banyak video | ✅ Tested |
+
+### Format Download
+
+Link yang dikembalikan adalah `https://dl.snapcdn.app/get?token=JWT`. Token adalah JWT yang berisi CDN URL asli. Link expired setelah ~1 jam.
+
+### Cara Pakai (TypeScript)
+
+```typescript
+import {
+  savetikVideoInfo,
+  savetikGetLinks,
+  savetikBatch,
+} from "./src/savetik/tiktok";
+
+const result = await savetikVideoInfo(
+  "https://www.tiktok.com/@charlidamelio/video/7662660254328556821"
+);
+
+console.log(result.video_id);   // "7662660254328556821"
+console.log(result.title);      // caption video
+console.log(result.thumbnail);  // URL thumbnail
+console.log(result.links);
+// [
+//   { label: "Download MP4 [1]", url: "https://dl.snapcdn.app/get?token=..." },
+//   { label: "Download MP4 HD",  url: "https://dl.snapcdn.app/get?token=..." },
+//   { label: "Download MP3",     url: "https://dl.snapcdn.app/get?token=..." },
+// ]
+
+// Shortcut
+const links = await savetikGetLinks(url);
+const mp4  = links.find(l => l.label.includes("MP4") && !l.label.includes("HD"));
+const mp3  = links.find(l => l.label.includes("MP3"));
+```
+
+```bash
+npm run test:savetik
+```
+
+**Source:** `src/savetik/tiktok.ts`
+
+---
+
+## Provider 7 — Instagram Android API (GRATIS, Play Count!) ★ BARU
+
+**Base URL:** `https://i.instagram.com/api/v1`  
+**Auth:** ❌ Tidak perlu  
+**Harga:** Gratis  
+**Diuji:** Juli 2026 ✅ — @charlidamelio (183250726), @instagram (25025320)
+
+Menggunakan endpoint internal yang dipakai app Android Instagram resmi.
+Keunggulan utama: endpoint `clips/user` mengembalikan **play_count** untuk setiap reel — 
+data yang tidak selalu tersedia via Provider 3 (instagram-web).
+
+### Confirmed Works
+
+| Fungsi | Endpoint | Output | Status |
+|--------|----------|--------|--------|
+| `getReelsFeed(userId)` | POST `/clips/user/` | Reels + **play_count** | ✅ Tested |
+| `getPostsFeed(userId)` | GET `/feed/user/{id}/` | Posts + media_type | ✅ Tested |
+| `getAllReels(userId)` | (auto-pagination) | Semua reels | ✅ Tested |
+| `getAllPosts(userId)` | (auto-pagination) | Semua posts | ✅ Tested |
+
+### Perbedaan vs Provider 3 (instagram-web)
+
+| | Provider 3 | Provider 7 |
+|--|--|--|
+| Play count reels | Tidak selalu ada | **Selalu ada** ✅ |
+| Endpoint reels | varies | POST `/clips/user/` |
+| Endpoint posts | `/feed/user/` | GET `/feed/user/` |
+| Rate limit | shared | shared (domain sama) |
+
+> ⚠️ Provider 3 dan 7 berbagi rate limit (keduanya hit `i.instagram.com`).  
+> Jangan pakai keduanya bersamaan secara agresif.
+
+### Cara Pakai (TypeScript)
+
+```typescript
+import {
+  getReelsFeed,
+  getPostsFeed,
+  getAllReels,
+  getAllPosts,
+} from "./src/instagram-android/instagram";
+
+// Butuh user_id numerik — dapat dari Provider 3:
+// const profile = await getUserProfile("charlidamelio");
+// const userId = profile.id;  // "183250726"
+
+const userId = "183250726";  // @charlidamelio
+
+// 1. Reels dengan PLAY COUNT
+const reels = await getReelsFeed(userId, "", 12);
+console.log(reels.items[0].play_count);    // 713,974 ← inilah yang beda
+console.log(reels.items[0].like_count);    // 7,162
+console.log(reels.items[0].comment_count); // 130
+console.log(reels.items[0].video_url);     // URL video langsung
+console.log(reels.items[0].thumbnail_url); // URL thumbnail
+console.log(reels.moreAvailable);          // true
+console.log(reels.nextMaxId);              // cursor pagination
+
+// Halaman 2:
+const page2 = await getReelsFeed(userId, reels.nextMaxId, 12);
+
+// 2. Posts (foto + video + carousel)
+const posts = await getPostsFeed(userId);
+const photos    = posts.items.filter(p => p.media_type === 1);
+const videos    = posts.items.filter(p => p.media_type === 2);
+const carousels = posts.items.filter(p => p.media_type === 8);
+
+// 3. Semua reels (auto-pagination, max 100)
+const allReels = await getAllReels(userId, 100);
+const totalPlays = allReels.reduce((s, r) => s + r.play_count, 0);
+console.log(`Total plays ${allReels.length} reels: ${totalPlays.toLocaleString()}`);
+
+// 4. Semua posts (auto-pagination)
+const allPosts = await getAllPosts(userId, 100);
+```
+
+```bash
+npm run test:instagram-android
+# Atau dengan user_id spesifik:
+IG_USER_ID=183250726 npm run test:instagram-android
+```
+
+**Source:** `src/instagram-android/instagram.ts`
 
 ---
 
@@ -542,6 +828,57 @@ Token salah atau expired. Cek di https://dashboard.ensembledata.com
 ### ❌ yt-dlp TikTok gagal
 yt-dlp TikTok **tidak works dari server** (IP block). Gunakan TikWM atau EnsembleData.  
 yt-dlp untuk **Instagram** works.
+
+### ❌ tikmate.app — returns null untuk video lama
+Video 2022-2023 atau yang sudah dihapus mengembalikan `null`. Ini bukan error — cek dulu `if (!info)`.
+```typescript
+const info = await tikmateVideoInfo(url);
+if (!info) {
+  // Video tidak tersedia, coba alternatif:
+  const detail = await tikwmVideoByUrl(url);  // TikWM sebagai fallback
+}
+```
+
+### ❌ savetik.co — curl not found / permission error
+savetik.co butuh `curl` di sistem. Cek dengan `which curl`. Di Docker/cloud, biasanya sudah ada.  
+Jika tidak ada, install: `apt-get install curl` (Debian/Ubuntu) atau `yum install curl` (CentOS).
+
+### ❌ savetik.co — link download expired
+Link snapcdn.app expired setelah ~1 jam. Ambil ulang dengan `savetikGetLinks(url)`.
+
+### ❌ Instagram rate limit (401 "Please wait a few minutes")
+Terlalu banyak request ke `i.instagram.com` dalam waktu singkat. Ini berlaku untuk semua provider yang hit domain yang sama (P3 instagram-web dan P7 instagram-android).
+
+Solusi:
+- Tambah delay: `await new Promise(r => setTimeout(r, 3000))` (3 detik)
+- Rotasi user agent (tambah versi Android berbeda)
+- Tunggu 5-10 menit sebelum retry
+
+### ❌ Instagram play_count = 0 di Provider 3
+Gunakan **Provider 7** `getReelsFeed()` yang pakai endpoint `clips/user/` — endpoint ini selalu mengembalikan play_count.
+
+---
+
+## Apa yang Diuji Tidak Works (Jangan Dicoba Lagi)
+
+Berikut alternatif yang sudah diuji Juli 2026 dan hasilnya negatif:
+
+| Provider | Hasil | Keterangan |
+|----------|-------|------------|
+| TikTok oEmbed (tiktok.com/oembed) | ❌ 302 redirect ke `/in/about` | Geo-block dari datacenter IP |
+| TikTok HTML scraping (`__NEXT_DATA__` / `SIGI_STATE`) | ❌ 0 bytes | CF block dari server |
+| TikTok web API (`/api/post/item_list/`) | ❌ 302 redirect | CF block dari server |
+| ssstik.io | ❌ Error HTML | TikTok changed something, unavailable |
+| musicaldown.com | ❌ HTTP 000 | Connection refused / server mati |
+| tikmate.online | ❌ HTTP 000 | Connection refused / server mati |
+| ttdownloader.com | ❌ 404 | Endpoint berubah |
+| tiktokio.com | ❌ 404 | Endpoint berubah |
+| imginn.com (IG scraper) | ❌ 403 CF | CF-protected |
+| Picuki.com | ❌ 301 CF | CF-protected |
+| Instagram `?__a=1` | ❌ HTTP 201 (no body) | Endpoint mati |
+| Instagram GraphQL query_hash | ❌ 400 invalid request | Endpoint mati |
+| Gramhir.com | ❌ 404 | Server mati |
+| Douyin API (aweme/v1/web) | ⚠️ 200 tapi kosong | `invalid_app` — butuh app params yang benar |
 
 ---
 
