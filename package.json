@@ -1,0 +1,22 @@
+{
+  "name": "fullscrap",
+  "version": "1.0.0",
+  "description": "Panduan & source code lengkap scraping TikTok dan Instagram — Tim TITANPRO",
+  "private": true,
+  "scripts": {
+    "test:tiktok-ensemble": "ts-node examples/test-tiktok-ensemble.ts",
+    "test:instagram-ensemble": "ts-node examples/test-instagram-ensemble.ts",
+    "test:tiktok-rapidapi": "ts-node examples/test-tiktok-rapidapi.ts",
+    "test:instagram-rapidapi": "ts-node examples/test-instagram-rapidapi.ts",
+    "test:apify": "ts-node examples/test-apify.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.5.4"
+  }
+}
