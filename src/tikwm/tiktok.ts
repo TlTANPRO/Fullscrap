@@ -525,3 +525,166 @@ export async function tikwmSearchUsers(
 export function buildTikTokVideoUrl(uniqueId: string, videoId: string): string {
   return `https://www.tiktok.com/@${uniqueId}/video/${videoId}`;
 }
+
+// ─── Endpoint Baru Juli 2026 — Batch 2 ──────────────────────────────────────
+
+export interface TikWMFollowing {
+  /** User ID numerik */
+  id: string;
+  /** Username TikTok (tanpa @) */
+  unique_id: string;
+  /** Nama tampilan */
+  nickname: string;
+  /** Region asal user */
+  region: string;
+  /** Avatar thumbnail URL */
+  avatar_thumb: string;
+  /** Apakah akun private */
+  is_private_account: boolean;
+  /** Sec UID (dipakai TikTok internal) */
+  sec_uid: string;
+  /** Signature / bio */
+  signature: string;
+  verified: boolean;
+}
+
+/**
+ * Ambil daftar following (akun yang di-follow) dari user TikTok.
+ * CONFIRMED WORKS — diuji Juli 2026 ✅
+ *
+ * ⚠️ Hanya tersedia jika user tidak menyembunyikan following list.
+ * Beberapa akun selebriti menyembunyikannya → error "Profile user is hiding following list."
+ *
+ * @param userId  - User ID numerik (bukan username). Dapatkan dari tikwmUserInfo().
+ *                  Contoh: dapatkan id dari tikwmUserInfo("charlidamelio").user.id
+ * @param count   - Jumlah per halaman (default 10, max 30)
+ * @param cursor  - Cursor pagination (mulai dari 0)
+ *
+ * @example
+ * // Step 1: dapatkan userId dari tikwmUserInfo
+ * const { user } = await tikwmUserInfo("tiktokcreators");
+ * // Step 2: ambil following list pakai user.id (numerik)
+ * const { followings } = await tikwmUserFollowing(user.id);
+ * for (const f of followings) {
+ *   console.log(f.unique_id, f.nickname, f.verified);
+ * }
+ */
+export async function tikwmUserFollowing(
+  userId: string,
+  count = 10,
+  cursor = 0
+): Promise<{ followings: TikWMFollowing[]; hasMore: boolean; cursor: number }> {
+  const raw = (await tikwmPost("/user/following", {
+    user_id: userId,
+    count,
+    cursor,
+  })) as {
+    code: number;
+    msg: string;
+    data: {
+      followings: TikWMFollowing[];
+      cursor: number;
+      has_more: boolean | number;
+    };
+  };
+
+  if (raw.code !== 0) {
+    throw new Error(`TikWM user/following error: ${raw.msg} (code ${raw.code})`);
+  }
+
+  return {
+    followings: raw.data?.followings ?? [],
+    hasMore: !!raw.data?.has_more,
+    cursor: raw.data?.cursor ?? 0,
+  };
+}
+
+export interface TikWMFeedVideo {
+  video_id: string;
+  region: string;
+  title: string;
+  /** Cover image URL */
+  cover: string;
+  /** URL play video tanpa watermark */
+  play: string;
+  /** URL play video dengan watermark */
+  wmplay: string;
+  duration: number;
+  play_count: number;
+  digg_count: number;
+  comment_count: number;
+  share_count: number;
+  collect_count: number;
+  download_count: number;
+  create_time: number;
+  music_id: string;
+  author: {
+    id: string;
+    unique_id: string;
+    nickname: string;
+    avatar: string;
+  };
+}
+
+/**
+ * Ambil feed/trending video TikTok berdasarkan region.
+ * CONFIRMED WORKS — diuji Juli 2026 ✅
+ *
+ * Endpoint: POST https://www.tikwm.com/api/feed/list
+ *
+ * @param region - Kode negara 2 huruf ISO 3166-1 alpha-2.
+ *                 Contoh: "US", "ID", "GB", "JP", "KR", "IN", "BR"
+ *                 Default "US".
+ * @param count  - Jumlah video per request (default 10, max 30)
+ * @param cursor - Cursor pagination (mulai dari 0)
+ *
+ * @example
+ * // Trending Indonesia
+ * const { videos } = await tikwmFeedList("ID", 10);
+ * for (const v of videos) {
+ *   console.log(v.author.unique_id, "→", v.title.slice(0, 60));
+ * }
+ *
+ * @example
+ * // Trending US, halaman kedua
+ * const page1 = await tikwmFeedList("US", 10, 0);
+ * const page2 = await tikwmFeedList("US", 10, page1.cursor);
+ */
+export async function tikwmFeedList(
+  region = "US",
+  count = 10,
+  cursor = 0
+): Promise<{ videos: TikWMFeedVideo[]; hasMore: boolean; cursor: number }> {
+  const raw = (await tikwmPost("/feed/list", {
+    region,
+    count,
+    cursor,
+  })) as {
+    code: number;
+    msg: string;
+    data: TikWMFeedVideo[] | { videos?: TikWMFeedVideo[]; has_more?: boolean; cursor?: number };
+  };
+
+  if (raw.code !== 0) {
+    throw new Error(`TikWM feed/list error: ${raw.msg} (code ${raw.code})`);
+  }
+
+  // Response bisa berupa array langsung atau object dengan key videos
+  let videos: TikWMFeedVideo[] = [];
+  let hasMore = false;
+  let nextCursor = 0;
+
+  if (Array.isArray(raw.data)) {
+    // Format array langsung (diamati Juli 2026)
+    videos = raw.data as TikWMFeedVideo[];
+    hasMore = videos.length === count;
+    nextCursor = cursor + count;
+  } else if (raw.data && typeof raw.data === "object") {
+    const d = raw.data as { videos?: TikWMFeedVideo[]; has_more?: boolean; cursor?: number };
+    videos = d.videos ?? [];
+    hasMore = !!d.has_more;
+    nextCursor = d.cursor ?? 0;
+  }
+
+  return { videos, hasMore, cursor: nextCursor };
+}

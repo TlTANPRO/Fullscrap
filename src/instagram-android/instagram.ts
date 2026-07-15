@@ -402,3 +402,76 @@ export async function getAllPosts(
 
   return all.slice(0, maxPosts);
 }
+
+// ─── Endpoint Baru Juli 2026 ────────────────────────────────────────────────
+
+export interface IGUserBasicInfo {
+  /** User ID numerik (string) */
+  pk: string;
+  /** Username (tanpa @) */
+  username: string;
+  /** URL foto profil */
+  profile_pic_url: string;
+  /** Apakah ada badge IG App Switcher */
+  show_ig_app_switcher_badge?: boolean;
+}
+
+/**
+ * Ambil info dasar user Instagram berdasarkan User ID numerik.
+ * CONFIRMED WORKS — diuji Juli 2026 ✅
+ *
+ * Endpoint: GET https://i.instagram.com/api/v1/users/{user_id}/info/
+ *
+ * ⚠️ Data yang dikembalikan MINIMAL: hanya pk, username, profile_pic_url.
+ * Untuk profil lengkap (follower count, bio, media_count, dll), gunakan
+ * getUserProfile() dari provider instagram-web.
+ *
+ * KAPAN PAKAI igGetUserById():
+ * - Kamu punya user_id numerik (dari webhook, DB, atau API lain) dan butuh username
+ * - Reverse lookup: user_id → username → profil lengkap via getUserProfile()
+ * - Cek cepat apakah suatu user_id masih aktif
+ *
+ * @param userId - User ID numerik Instagram (string).
+ *                 Contoh: nike = "13460080", instagram = "25025320"
+ *
+ * @example
+ * // Reverse lookup: user_id → username
+ * const info = await igGetUserById("13460080");
+ * console.log(info.username); // "nike"
+ *
+ * // Lanjutkan dengan profil lengkap jika perlu:
+ * // import { getUserProfile } from "../instagram-web/instagram";
+ * // const fullProfile = await getUserProfile(info.username);
+ */
+export async function igGetUserById(userId: string): Promise<IGUserBasicInfo> {
+  const res = await fetch(
+    `${BASE_URL}/users/${userId}/info/`,
+    { headers: ANDROID_HEADERS }
+  );
+
+  const text = await res.text();
+
+  if (text.includes('"login_required"') || text.includes('"message":"login_required"')) {
+    throw new Error(`Instagram: user/${userId}/info requires login`);
+  }
+
+  if (!res.ok) {
+    throw new Error(`Instagram user/info error ${res.status}: ${text.slice(0, 200)}`);
+  }
+
+  const json = JSON.parse(text) as {
+    user?: IGUserBasicInfo;
+    status?: string;
+  };
+
+  if (!json.user) {
+    throw new Error(`Instagram: user ID "${userId}" tidak ditemukan atau tidak tersedia`);
+  }
+
+  return {
+    pk: json.user.pk,
+    username: json.user.username,
+    profile_pic_url: json.user.profile_pic_url,
+    show_ig_app_switcher_badge: json.user.show_ig_app_switcher_badge,
+  };
+}

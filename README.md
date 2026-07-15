@@ -26,7 +26,12 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **6** | **savetik.co** ★ BARU | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **7** | **Instagram Android API** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
-> **Update Juli 2026 (terbaru):**
+> **Update Juli 2026 Batch 2 (terbaru):**
+> - TikWM: tikwmUserFollowing() — daftar following user by numeric user_id
+> - TikWM: tikwmFeedList() — trending video by region (US, ID, GB, JP, dll)
+> - Instagram Android: igGetUserById() — reverse lookup user_id numerik ke username
+>
+> **Update Juli 2026 Batch 1:**
 > - ★ **Provider 5** — tikmate.app: metadata TikTok (author, stats, cover) via JSON API
 > - ★ **Provider 6** — savetik.co: download links (MP4 / HD / MP3) tanpa watermark
 > - ★ **Provider 7** — Instagram Android API: reels + **play count** via clips/user endpoint
@@ -41,12 +46,15 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | User posts TikTok dari server | EnsembleData (P1) — satu-satunya reliable |
 | Download video TikTok no-WM | savetik.co (P6) atau TikWM `videoByUrl` (P2) |
 | Metadata video TikTok single | tikmate.app (P5) atau TikWM (P2) |
-| Hashtag / trending TikTok | TikWM (P2) |
+| Hashtag / trending TikTok | TikWM (P2) tikwmHashtagPosts() |
+| Trending feed by region (TikTok) | TikWM (P2) tikwmFeedList("ID") BARU |
+| Following list user (TikTok) | TikWM (P2) tikwmUserFollowing(userId) BARU |
 | Profil Instagram | IG Web API (P3) atau IG Android (P7) |
 | Posts Instagram + pagination | IG Android (P7) `getPostsFeed()` |
 | Reels Instagram + **play count** | IG Android (P7) `getReelsFeed()` ← **TERPENTING** |
 | Post detail Instagram single | yt-dlp (P4) |
 | Stories / followers IG | EnsembleData (P1) — butuh login |
+| Reverse lookup user_id → username (IG) | Instagram Android (P7) igGetUserById(userId) BARU |
 
 ---
 
