@@ -27,6 +27,7 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **7** | **Instagram Android API** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **8** | **Perplexity Sonar** ★ BARU AI | TikTok + IG | API key (berbayar, murah) | OpenRouter key | ✅ Confirmed |
 | **9** | **Gemini Google Search** ★ BARU AI | TikTok + IG | Free tier / API key | Gemini key | ✅ Confirmed |
+| **10** | **SocialBlade** ★ BARU | TikTok + IG | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
 > **Update Juli 2026 Batch 2 (terbaru):**
 > - TikWM: tikwmUserFollowing() — daftar following user by numeric user_id
@@ -59,6 +60,8 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | Reverse lookup user_id → username (IG) | Instagram Android (P7) igGetUserById(userId) BARU |
 | Profil IG/TT tanpa session (AI search) | Perplexity (P8) perplexityInstagramProfile() BARU |
 | Profil IG/TT via Google grounding (AI) | Gemini (P9) geminiInstagramProfile() BARU |
+| Followers + avg_likes + engagement (IG) | SocialBlade (P10) socialbladeInstagramProfile() BARU |
+| Followers + total_likes (TikTok, gratis) | SocialBlade (P10) socialbladeTikTokProfile() BARU |
 
 ---
 

@@ -15,13 +15,14 @@
     "test:tiktok-oembed": "ts-node examples/test-tiktok-oembed.ts",
     "test:tiktok-rapidapi": "ts-node examples/test-tiktok-rapidapi.ts",
     "test:instaloader": "python3 examples/test-instaloader.py",
-    "test:all-free": "ts-node examples/test-tikwm.ts && ts-node examples/test-tikwm-extended.ts && ts-node examples/test-tikwm-new.ts && ts-node examples/test-instagram-web.ts && ts-node examples/test-tikmate.ts && ts-node examples/test-savetik.ts && ts-node examples/test-instagram-android.ts && ts-node examples/test-instagram-by-id.ts",
+    "test:all-free": "ts-node examples/test-tikwm.ts && ts-node examples/test-tikwm-extended.ts && ts-node examples/test-tikwm-new.ts && ts-node examples/test-instagram-web.ts && ts-node examples/test-tikmate.ts && ts-node examples/test-savetik.ts && ts-node examples/test-instagram-android.ts && ts-node examples/test-instagram-by-id.ts && ts-node examples/test-socialblade.ts",
     "typecheck": "tsc --noEmit",
     "test:tikwm-new": "ts-node examples/test-tikwm-new.ts",
     "test:instagram-by-id": "ts-node examples/test-instagram-by-id.ts",
     "test:perplexity": "ts-node examples/test-perplexity.ts",
     "test:gemini": "ts-node examples/test-gemini.ts",
-    "test:all-ai": "ts-node examples/test-perplexity.ts && ts-node examples/test-gemini.ts"
+    "test:all-ai": "ts-node examples/test-perplexity.ts && ts-node examples/test-gemini.ts",
+    "test:socialblade": "ts-node examples/test-socialblade.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.5"
