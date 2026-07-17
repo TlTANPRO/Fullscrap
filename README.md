@@ -28,7 +28,17 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **8** | **Perplexity Sonar** ★ BARU AI | TikTok + IG | API key (berbayar, murah) | OpenRouter key | ✅ Confirmed |
 | **9** | **Gemini Google Search** ★ BARU AI | TikTok + IG | Free tier / API key | Gemini key | ✅ Confirmed |
 | **10** | **SocialBlade** ★ BARU | TikTok + IG | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **11** | **TikWM User Reposts** ★ BARU | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **12** | **Wayback TikTok** ★ BARU | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **12b** | **Wayback Instagram** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **13** | **Instagram web_profile_info** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
+> > **Update Juli 2026 Batch 3 (terbaru):**
+> - ★ P11 — TikWM: `tikwmUserReposts()` — repost list (POST /api/user/reposts) ✅
+> - ★ P12 — Wayback TikTok: profil dari arsip (bypass CF, no rate-limit) ✅
+> - ★ P12b — Wayback Instagram: profil dari arsip (followers/posts via og:description) ✅  
+> - ★ P13 — Instagram `web_profile_info`: profil realtime tanpa login ✅
+>
 > **Update Juli 2026 Batch 2 (terbaru):**
 > - TikWM: tikwmUserFollowing() — daftar following user by numeric user_id
 > - TikWM: tikwmFeedList() — trending video by region (US, ID, GB, JP, dll)
