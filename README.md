@@ -32,6 +32,7 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **12** | **Wayback TikTok** ★ BARU | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **12b** | **Wayback Instagram** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **13** | **Instagram web_profile_info** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **14** | **imginn.com Scraper** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
 > > **Update Juli 2026 Batch 3 (terbaru):**
 > - ★ P11 — TikWM: `tikwmUserReposts()` — repost list (POST /api/user/reposts) ✅

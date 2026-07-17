@@ -15,7 +15,7 @@
     "test:tiktok-oembed": "ts-node examples/test-tiktok-oembed.ts",
     "test:tiktok-rapidapi": "ts-node examples/test-tiktok-rapidapi.ts",
     "test:instaloader": "python3 examples/test-instaloader.py",
-    "test:all-free": "ts-node examples/test-tikwm.ts && ts-node examples/test-tikwm-extended.ts && ts-node examples/test-tikwm-new.ts && ts-node examples/test-instagram-web.ts && ts-node examples/test-tikmate.ts && ts-node examples/test-savetik.ts && ts-node examples/test-instagram-android.ts && ts-node examples/test-instagram-by-id.ts && ts-node examples/test-socialblade.ts && ts-node examples/test-tikwm-extra.ts && ts-node examples/test-wayback-tiktok.ts && ts-node examples/test-instagram-web-v2.ts",
+    "test:all-free": "ts-node examples/test-tikwm.ts && ts-node examples/test-tikwm-extended.ts && ts-node examples/test-tikwm-new.ts && ts-node examples/test-instagram-web.ts && ts-node examples/test-tikmate.ts && ts-node examples/test-savetik.ts && ts-node examples/test-instagram-android.ts && ts-node examples/test-instagram-by-id.ts && ts-node examples/test-socialblade.ts && ts-node examples/test-tikwm-extra.ts && ts-node examples/test-wayback-tiktok.ts && ts-node examples/test-instagram-web-v2.ts && ts-node examples/test-imginn.ts",
     "typecheck": "tsc --noEmit",
     "test:tikwm-new": "ts-node examples/test-tikwm-new.ts",
     "test:instagram-by-id": "ts-node examples/test-instagram-by-id.ts",
@@ -26,7 +26,8 @@
     "test:tikwm-extra": "ts-node examples/test-tikwm-extra.ts",
     "test:wayback-tiktok": "ts-node examples/test-wayback-tiktok.ts",
     "test:wayback-instagram": "ts-node examples/test-wayback-instagram.ts",
-    "test:instagram-web-v2": "ts-node examples/test-instagram-web-v2.ts"
+    "test:instagram-web-v2": "ts-node examples/test-instagram-web-v2.ts",
+    "test:imginn": "ts-node examples/test-imginn.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.5"
