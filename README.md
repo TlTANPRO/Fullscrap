@@ -36,8 +36,12 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **15** | **TikHub API** ★ BARU Batch 5 | TikTok + IG | Pay-per-use | API Key | ⚠️ Butuh key |
 | **16** | **instagrapi** ★ BARU Batch 5 | Instagram | **Gratis** | Login IG | ⚠️ Butuh login |
 | **17** | **instagram-private-api (Node)** ★ BARU Batch 5 | Instagram | **Gratis** | Login IG | ⚠️ Butuh login |
+| **18** | **Douyin Hot Search** ★ BARU Batch 6 | TikTok (China) | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
-> > **Update Juli 2026 Batch 5 (terbaru):**
+> > **Update Juli 2026 Batch 6 (terbaru):**
+> - ★ P18 — Douyin Hot Search: 50 trending topics real-time (gratis, tanpa login, tanpa API key!) ✅
+>
+> > **Update Juli 2026 Batch 5:**
 > - ★ P15 — TikHub: 165 TikTok + 94 IG endpoint (followers list, stories, highlights — tanpa login!) ⚠️ butuh API key
 > - ★ P16 — instagrapi v2.18.8 Python: stories, followers, DM, upload (gratis, butuh login IG)
 > - ★ P17 — instagram-private-api v1.46.1 Node.js: versi TypeScript dari instagrapi
@@ -87,6 +91,7 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | Profil IG/TT via Google grounding (AI) | Gemini (P9) geminiInstagramProfile() BARU |
 | Followers + avg_likes + engagement (IG) | SocialBlade (P10) socialbladeInstagramProfile() BARU |
 | Followers + total_likes (TikTok, gratis) | SocialBlade (P10) socialbladeTikTokProfile() BARU |
+| **Trending topic China/Douyin (real-time)** | Douyin Hot Search (P18) douyinHotSearch() ★ BARU |
 
 ---
 
@@ -962,3 +967,35 @@ Berikut alternatif yang sudah diuji Juli 2026 dan hasilnya negatif:
 ---
 
 *Semua endpoint di README ini diuji langsung dan confirmed works — Juli 2026, Tim TITANPRO.*
+
+---
+
+## Batch 6 — Tes yang Dilakukan (Juli 2026)
+
+Lebih dari 60 site/metode ditest dari server Replit. Semua ❌ kecuali yang di-commit.
+
+### ✅ Works (ditambahkan ke repo)
+- **P18 — Douyin Hot Search** (`douyinHotSearch()`): 50 trending topics real-time, gratis, tanpa login
+
+### ❌ Tidak works dari server Replit (semua sudah ditest langsung)
+**TikTok downloaders:** y2mate, ssstiktok.io, ttsave.app (server error), tikmate.io (404), tikmate.cc (404), musicaldown.com (CF), tmate.io (503), ziptik.net, hdtikdownload.com, tik2save.com, xclip.io, snaptik.app (semua dead/CF/JS-only)
+
+**Instagram downloaders:** snapsave.app (JS-terenkripsi perlu eval), snapinsta.app (JS-terenkripsi), savefrom.net, instasave.io, instavideosave.net, downloadinstagramvideos.org, fastdl.app, igram.world, reelsdownloader.net (semua dead/no-response)
+
+**Instagram viewers:** picuki.com (CF), imginn.io, instadp.com, iganony.io, dumpor.com (301), storiesig.com (HTML hanya), pixwox.com (no response)
+
+**TikTok oEmbed bot UAs:** Googlebot, facebookexternalhit, Discordbot, LinkedInBot, Slackbot, TelegramBot, Pinterest, WhatsApp — semua redirect ke HTML (bukan JSON)
+
+**TikTok internal APIs:** aweme/v1/web/tab/feed (empty), TikTok embed v2 (302 CF), ProxiTok instances (semua mati), Douyin aweme/detail (empty/CF), Douyin search (require login 2483)
+
+**WordPress aio-dl plugin (batch):** snaptik.app, savevideo.me, savevideos.site, savevid.net, videodownloaded.co, downloader.vc, snapsave.app, tikdownload.site, tikdownload.io, musicaldown.com — semua dead/CF/HTML
+
+**Instagram API approaches:** Meta oEmbed (Permission Denied), instagram-basic-display (need OAuth), Threads GraphQL (HTML), IG oEmbed (need token), IG stories reels_media (ok tapi empty/need auth)
+
+**Douyin endpoints yang require login:** search (2483), user profile (8), video feed (empty), challenge posts (empty), challenge search (2483)
+
+**Embedding services:** Behold.so (404), Curator.io (404), iframely.com (403 need key), noembed.com (no provider), embeds.im (no response)
+
+**SocialBlade statistics page** — CF block pada endpoint `/statistics`
+
+**Cobalt.tools community instances** — semua dead/no response
