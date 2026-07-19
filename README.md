@@ -33,8 +33,17 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **12b** | **Wayback Instagram** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **13** | **Instagram web_profile_info** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **14** | **imginn.com Scraper** ★ BARU | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **15** | **TikHub API** ★ BARU Batch 5 | TikTok + IG | Pay-per-use | API Key | ⚠️ Butuh key |
+| **16** | **instagrapi** ★ BARU Batch 5 | Instagram | **Gratis** | Login IG | ⚠️ Butuh login |
+| **17** | **instagram-private-api (Node)** ★ BARU Batch 5 | Instagram | **Gratis** | Login IG | ⚠️ Butuh login |
 
-> > **Update Juli 2026 Batch 3 (terbaru):**
+> > **Update Juli 2026 Batch 5 (terbaru):**
+> - ★ P15 — TikHub: 165 TikTok + 94 IG endpoint (followers list, stories, highlights — tanpa login!) ⚠️ butuh API key
+> - ★ P16 — instagrapi v2.18.8 Python: stories, followers, DM, upload (gratis, butuh login IG)
+> - ★ P17 — instagram-private-api v1.46.1 Node.js: versi TypeScript dari instagrapi
+> - ❌ Ditest tapi tidak works dari server: yt-dlp TikTok (python3 not found + CF block), ttsave.app (error), snaptik.app (server error), ttdownloader.net (no response), savefrom.net (JS-only), instastories.watch (mati), tikmate.app (BUKAN TikTok tool — itu game Rusia!)
+>
+> **Update Juli 2026 Batch 3 (terbaru):**
 > - ★ P11 — TikWM: `tikwmUserReposts()` — repost list (POST /api/user/reposts) ✅
 > - ★ P12 — Wayback TikTok: profil dari arsip (bypass CF, no rate-limit) ✅
 > - ★ P12b — Wayback Instagram: profil dari arsip (followers/posts via og:description) ✅  
@@ -67,7 +76,12 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | Posts Instagram + pagination | IG Android (P7) `getPostsFeed()` |
 | Reels Instagram + **play count** | IG Android (P7) `getReelsFeed()` ← **TERPENTING** |
 | Post detail Instagram single | yt-dlp (P4) |
-| Stories / followers IG | EnsembleData (P1) — butuh login |
+| Stories / followers IG | TikHub (P15) tanpa login IG, atau instagrapi P16 (gratis, butuh akun IG) |
+| Followers list TikTok | TikHub (P15) tikhubTTUserFans() |
+| Following list TikTok | TikHub (P15) tikhubTTUserFollowing() |
+| Post likes list IG | TikHub (P15) tikhubIGPostLikes() — eksklusif |
+| IG stories (gratis butuh akun IG) | instagrapi P16 (Python) atau instagram-private-api P17 (Node.js) |
+| IG followers list (gratis butuh akun IG) | instagrapi P16 atau instagram-private-api P17 |
 | Reverse lookup user_id → username (IG) | Instagram Android (P7) igGetUserById(userId) BARU |
 | Profil IG/TT tanpa session (AI search) | Perplexity (P8) perplexityInstagramProfile() BARU |
 | Profil IG/TT via Google grounding (AI) | Gemini (P9) geminiInstagramProfile() BARU |
@@ -118,6 +132,16 @@ Fullscrap/
 │   ├── instaloader/
 │   │   └── instagram.py           ← Instagram via instaloader (⚠️ belum ditest)
 │   │
+│   ├── tikhub/
+│   │   ├── tiktok.ts              ← P15: TikTok via TikHub (165 endpoints) ★ BARU Batch 5
+│   │   └── instagram.ts           ← P15: Instagram via TikHub (94 endpoints) ★ BARU Batch 5
+│   │
+│   ├── instagrapi/
+│   │   └── instagram.py           ← P16: Instagram via instagrapi Python ★ BARU Batch 5
+│   │
+│   ├── instagram-private-api/
+│   │   └── instagram.ts           ← P17: Instagram Private API Node.js ★ BARU Batch 5
+│   │
 │   └── utils/
 │       └── parse-username.ts      ← URL/handle parser
 │
@@ -131,6 +155,10 @@ Fullscrap/
     ├── test-savetik.ts            ← Test P6 ★ BARU
     ├── test-instagram-android.ts  ← Test P7 ★ BARU
     ├── test-tiktok-oembed.ts      ← Test oEmbed (❌ blocked dari datacenter)
+    ├── test-tikhub-tiktok.ts      ← Test TikHub TikTok ★ BARU Batch 5 (⚠️ butuh TIKHUB_API_KEY)
+    ├── test-tikhub-instagram.ts   ← Test TikHub Instagram ★ BARU Batch 5 (⚠️ butuh TIKHUB_API_KEY)
+    ├── test-instagrapi.py         ← Test instagrapi ★ BARU Batch 5 (⚠️ butuh login IG)
+    └── test-instagram-private-api.ts ← Test instagram-private-api ★ BARU Batch 5 (⚠️ butuh login IG)
     ├── test-tiktok-rapidapi.ts    ← Test RapidAPI (⚠️ perlu RAPIDAPI_KEY)
     └── test-instaloader.py        ← Test instaloader (⚠️ perlu pip)
 ```
@@ -852,8 +880,26 @@ const { posts } = await fetchInstagramPosts(profile.userId, 8); // ← userId!
 Token salah atau expired. Cek di https://dashboard.ensembledata.com
 
 ### ❌ yt-dlp TikTok gagal
-yt-dlp TikTok **tidak works dari server** (IP block). Gunakan TikWM atau EnsembleData.  
-yt-dlp untuk **Instagram** works.
+yt-dlp TikTok **tidak works dari server** karena 2 alasan:
+1. CF block — TikTok memblokir traffic dari datacenter IP
+2. Butuh python3 yang mungkin tidak tersedia di server
+
+Gunakan **TikWM** (P2) atau **EnsembleData** (P1) sebagai alternatif.  
+yt-dlp untuk **Instagram** masih works (P4).
+
+### ❌ TikHub — 401 Unauthorized
+API token tidak ditemukan. Set TIKHUB_API_KEY di environment.
+Daftar di https://tikhub.io → dashboard → copy API key.
+```bash
+export TIKHUB_API_KEY=your_key_here
+```
+
+### ❌ instagrapi / instagram-private-api — Challenge Required
+Instagram mendeteksi login dari IP baru (datacenter). Solusi:
+- Gunakan residential proxy / VPN saat login pertama kali
+- Simpan session ke file (sudah otomatis di kode) — login berikutnya pakai session
+- Gunakan akun yang sudah berumur (bukan akun baru)
+- Tambah delay: `cl.delay_range = [2, 5]`
 
 ### ❌ tikmate.app — returns null untuk video lama
 Video 2022-2023 atau yang sudah dihapus mengembalikan `null`. Ini bukan error — cek dulu `if (!info)`.
@@ -904,6 +950,13 @@ Berikut alternatif yang sudah diuji Juli 2026 dan hasilnya negatif:
 | Instagram `?__a=1` | ❌ HTTP 201 (no body) | Endpoint mati |
 | Instagram GraphQL query_hash | ❌ 400 invalid request | Endpoint mati |
 | Gramhir.com | ❌ 404 | Server mati |
+| ttsave.app | ❌ Error unknown | Endpoint berubah / tidak bisa dari datacenter |
+| snaptik.app | ❌ Server Error | Tidak reliable dari server IP |
+| ttdownloader.net | ❌ Tidak merespons | Server tidak merespons POST request |
+| savefrom.net TikTok | ❌ JS-only | Hanya bisa dari browser (JS redirect) |
+| instastories.watch | ❌ Tidak merespons | Server mati |
+| tikmate.app (versi TikTok) | ❌ Bukan TikTok tool | Ini app game Rusia — nama sama, beda produk! |
+| yt-dlp TikTok dari server | ❌ CF block + python3 not found | Butuh python3 + CF block datacenter IP |
 | Douyin API (aweme/v1/web) | ⚠️ 200 tapi kosong | `invalid_app` — butuh app params yang benar |
 
 ---

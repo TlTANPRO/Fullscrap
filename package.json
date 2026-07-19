@@ -1,7 +1,7 @@
 {
   "name": "fullscrap",
   "version": "1.0.0",
-  "description": "Panduan & source code lengkap scraping TikTok dan Instagram \u2014 Tim TITANPRO",
+  "description": "Panduan & source code lengkap scraping TikTok dan Instagram — Tim TITANPRO",
   "private": true,
   "scripts": {
     "test:tiktok-ensemble": "ts-node examples/test-tiktok-ensemble.ts",
@@ -27,7 +27,12 @@
     "test:wayback-tiktok": "ts-node examples/test-wayback-tiktok.ts",
     "test:wayback-instagram": "ts-node examples/test-wayback-instagram.ts",
     "test:instagram-web-v2": "ts-node examples/test-instagram-web-v2.ts",
-    "test:imginn": "ts-node examples/test-imginn.ts"
+    "test:imginn": "ts-node examples/test-imginn.ts",
+    "test:tikhub-tiktok": "ts-node examples/test-tikhub-tiktok.ts",
+    "test:tikhub-instagram": "ts-node examples/test-tikhub-instagram.ts",
+    "test:instagrapi": "python3 examples/test-instagrapi.py",
+    "test:instagram-private-api": "ts-node examples/test-instagram-private-api.ts",
+    "test:all-paid": "ts-node examples/test-tiktok-ensemble.ts && ts-node examples/test-instagram-ensemble.ts && ts-node examples/test-tikhub-tiktok.ts && ts-node examples/test-tikhub-instagram.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.5"
