@@ -38,8 +38,15 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **17** | **instagram-private-api (Node)** ★ BARU Batch 5 | Instagram | **Gratis** | Login IG | ⚠️ Butuh login |
 | **18** | **Douyin Hot Search** ★ BARU Batch 6 | TikTok (China) | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **19** | **Jina AI Reader** ★ BARU Batch 7 | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **20** | **yt-dlp via uvx** ★ BARU Batch 8 | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **21** | **Instagram Embed Scraper** ★ BARU Batch 8 | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
-> > **Update Juli 2026 Batch 7 (terbaru):**
+> > **Update Juli 2026 Batch 8 (terbaru):**
+> - ★ P20 — yt-dlp via uvx: like_count, comment_count, caption, thumbnail, format list untuk post Instagram individual (tanpa install permanen, cukup uvx) ✅
+> - ★ P21 — Instagram Embed Scraper: like_count + comment_count + author dari `/embed/captioned/` dengan UA facebookexternalhit ✅
+> - ❌ Ditest tapi tidak works: comments i.instagram.com (fail), likers i.instagram.com (fail), hashtag sections (login_required), tagged posts (login_required), media info by ID (login_required), Instagram GraphQL doc_id (HTML response), Threads API posts (JS-rendered), picuki/dumpor/inflact/hypeauditor/socialblade IG (CF block), pixwox/instanavigation/anon-ig (empty/timeout), insta-stories.ru (JS-rendered Next.js), iganony.io (CF), snapwidget.com (HTML), storysaver.net (redirect), storiesig.com (CF), fastdl.app/savetoinsta (empty), yt-dlp untuk user listing pages (429 dari datacenter)
+>
+> > **Update Juli 2026 Batch 7:**
 > - ★ P19 — Jina AI Reader TikTok: profil (follower/following/likes/bio/avatar), hashtag post count, video metadata — GRATIS, tanpa API key ✅
 >
 > > **Update Juli 2026 Batch 6:**
@@ -98,6 +105,8 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **Trending topic China/Douyin (real-time)** | Douyin Hot Search (P18) douyinHotSearch() ★ BARU |
 | **Profil TikTok cepat tanpa key** | **Jina AI (P19)** `jinaTikTokProfile()` ★ BARU Batch 7 |
 | **Hashtag TikTok post count tanpa key** | **Jina AI (P19)** `jinaTikTokHashtag()` ★ BARU Batch 7 |
+| **Like + comment count post IG (cepat)** | **Instagram Embed (P21)** `igEmbedPostInfo()` ★ BARU Batch 8 |
+| **Post IG detail lengkap by URL** | **yt-dlp (P20)** `igGetPostInfo()` ★ BARU Batch 8 |
 
 ---
 
@@ -156,6 +165,12 @@ Fullscrap/
 │   ├── jina/
 │   │   └── tiktok.ts              ← P19: TikTok via Jina AI Reader (GRATIS) ★ BARU
 │   │
+│   ├── ytdlp/
+│   │   └── instagram.ts           ← P20: Post IG detail via yt-dlp (GRATIS) ★ BARU Batch 8
+│   │
+│   ├── instagram-embed/
+│   │   └── instagram.ts           ← P21: Like/comment dari embed page (GRATIS) ★ BARU Batch 8
+│   │
 │   └── utils/
 │       └── parse-username.ts      ← URL/handle parser
 │
@@ -172,7 +187,9 @@ Fullscrap/
     ├── test-tikhub-tiktok.ts      ← Test TikHub TikTok ★ BARU Batch 5 (⚠️ butuh TIKHUB_API_KEY)
     ├── test-tikhub-instagram.ts   ← Test TikHub Instagram ★ BARU Batch 5 (⚠️ butuh TIKHUB_API_KEY)
     ├── test-instagrapi.py         ← Test instagrapi ★ BARU Batch 5 (⚠️ butuh login IG)
-    └── test-instagram-private-api.ts ← Test instagram-private-api ★ BARU Batch 5 (⚠️ butuh login IG)
+    ├── test-instagram-private-api.ts ← Test instagram-private-api ★ BARU Batch 5 (⚠️ butuh login IG)
+    ├── test-ytdlp-instagram.ts    ← Test P20: yt-dlp post IG ★ BARU Batch 8
+    └── test-instagram-embed.ts    ← Test P21: Embed like/comment ★ BARU Batch 8
     ├── test-tiktok-rapidapi.ts    ← Test RapidAPI (⚠️ perlu RAPIDAPI_KEY)
     └── test-instaloader.py        ← Test instaloader (⚠️ perlu pip)
 ```
@@ -613,27 +630,29 @@ npm run test:instaloader          # ⚠️ butuh pip install
 
 ## Perbandingan Kemampuan
 
-| Fitur | EnsembleData | TikWM | tikmate ★ | savetik ★ | IG Web | IG Android ★ | yt-dlp | Jina AI ★ |
-|-------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **TikTok** | | | | | | | |
-| User profil | ✅ | ✅ | — | — | — | — | — | ✅ |
-| User video list | ✅ | ⚠️ CF* | — | — | — | — | — | — |
-| Video metadata | ✅ | ✅ | ✅ | — | — | — | — | ✅ |
-| Video download | — | ✅ | ✅** | ✅ | — | — | — | — |
-| Hashtag info/video | ✅ | ✅ | — | — | — | — | — | ✅ |
-| Search video | ✅ | ✅ | — | — | — | — | — | — |
-| **Instagram** | | | | | | | |
-| User profil | ✅ | — | — | — | ✅ | — | — | — |
-| Posts list | ✅ | — | — | — | ✅ | ✅ | — | — |
-| Reels list | ✅ | — | — | — | ✅ | ✅ | — | — |
-| Reels **play count** | ✅ | — | — | — | ⚠️ | **✅** | — | — |
-| Post detail | ✅ | — | — | — | — | — | ✅ | — |
-| Stories | ✅ | — | — | — | ❌ | ❌ | — | — |
-| Followers | ✅ | — | — | — | ❌ | ❌ | — | — |
-| Search user | ✅ | — | — | — | ✅ | — | — | — |
+| Fitur | EnsembleData | TikWM | tikmate ★ | savetik ★ | IG Web | IG Android ★ | yt-dlp uvx ★ | IG Embed ★ | Jina AI ★ |
+|-------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **TikTok** | | | | | | | | | |
+| User profil | ✅ | ✅ | — | — | — | — | — | — | ✅ |
+| User video list | ✅ | ⚠️ CF* | — | — | — | — | — | — | — |
+| Video metadata | ✅ | ✅ | ✅ | — | — | — | — | — | ✅ |
+| Video download | — | ✅ | ✅** | ✅ | — | — | — | — | — |
+| Hashtag info/video | ✅ | ✅ | — | — | — | — | — | — | ✅ |
+| Search video | ✅ | ✅ | — | — | — | — | — | — | — |
+| **Instagram** | | | | | | | | | |
+| User profil | ✅ | — | — | — | ✅ | — | — | — | — |
+| Posts list | ✅ | — | — | — | ✅ | ✅ | — | — | — |
+| Reels list | ✅ | — | — | — | ✅ | ✅ | — | — | — |
+| Reels **play count** | ✅ | — | — | — | ⚠️ | **✅** | — | — | — |
+| Post detail (by URL) | ✅ | — | — | — | — | — | **✅** | — | — |
+| Like + comment count | ✅ | — | — | — | — | — | ✅ | **✅** | — |
+| Stories | ✅ | — | — | — | ❌ | ❌ | — | — | — |
+| Followers | ✅ | — | — | — | ❌ | ❌ | — | — | — |
+| Search user | ✅ | — | — | — | ✅ | — | — | — | — |
 
 > ⚠️ CF* = TikWM `/api/user/posts` CF-protected dari datacenter. Works dari browser/residential.  
 > ✅** tikmate: download via token (`https://api.tikmate.app/download?token=…` → 302 ke CDN)
+> ✅ yt-dlp uvx: like_count + comment_count + caption + thumbnail per URL post, tanpa install permanen
 
 ---
 
@@ -860,6 +879,151 @@ IG_USER_ID=183250726 npm run test:instagram-android
 
 ---
 
+## Provider 20 — yt-dlp via uvx (GRATIS, No API Key) ★ BARU Batch 8
+
+**Tool:** yt-dlp (https://github.com/yt-dlp/yt-dlp)  
+**Jalankan:** `uvx yt-dlp` (tanpa install) ATAU `pip install yt-dlp`  
+**Auth:** ❌ Tidak perlu (untuk post publik)  
+**Harga:** Gratis  
+**Diuji:** Juli 2026 ✅ — Nike post `DZK3iOsRlWX`: 2.7M likes, 59K comments
+
+yt-dlp adalah CLI open-source yang mendukung Instagram. Di Replit (Nix environment),
+cukup pakai `uvx yt-dlp` tanpa install permanen.
+
+### Confirmed Works
+
+| Fungsi | Output | Status |
+|--------|--------|--------|
+| `igGetPostInfo(postUrl)` | like_count, comment_count, caption, thumbnail, formats | ✅ Tested |
+| `igBatchPostInfo(urls[])` | Batch beberapa post URL | ✅ Tested |
+
+### Limitation
+
+- Hanya untuk post individual (bukan user listing pages)
+- User listing `/nike/posts/` → **429 dari datacenter IP**
+- Tagged pages → **429 dari datacenter IP**
+- Beberapa post lama/privat → empty response dari Instagram API
+- Membutuhkan `uvx` atau `pip install yt-dlp` di environment
+
+### Quick Start
+
+```bash
+# Cek yt-dlp tersedia
+uvx yt-dlp --version  # Replit: langsung tersedia via uvx
+
+# Ambil info post
+uvx yt-dlp "https://www.instagram.com/p/DZK3iOsRlWX/" --skip-download --dump-json | python3 -c "
+import sys, json; d=json.load(sys.stdin)
+print('likes:', d['like_count'], '| comments:', d['comment_count'])
+print('uploader:', d['uploader'])
+print('caption:', d['description'][:80])
+"
+```
+
+### Cara Pakai (TypeScript)
+
+```typescript
+import { igGetPostInfo, igBatchPostInfo } from "./src/ytdlp/instagram";
+
+// Single post
+const post = await igGetPostInfo("https://www.instagram.com/p/DZK3iOsRlWX/");
+console.log(post.uploader);      // "Nike"
+console.log(post.like_count);    // 2779788
+console.log(post.comment_count); // 59888
+console.log(post.description);   // "It was all going to plan..."
+console.log(post.thumbnail);     // CDN URL
+
+// Batch
+const posts = await igBatchPostInfo([
+  "https://www.instagram.com/p/DZK3iOsRlWX/",
+  "https://www.instagram.com/reel/ANOTHER_CODE/",
+], 2000);
+```
+
+```bash
+npm run test:ytdlp-instagram
+```
+
+**Source:** `src/ytdlp/instagram.ts`
+
+---
+
+## Provider 21 — Instagram Embed Scraper (GRATIS, No API Key) ★ BARU Batch 8
+
+**Endpoint:** `GET https://www.instagram.com/p/SHORTCODE/embed/captioned/`  
+**UA WAJIB:** `facebookexternalhit/1.1` (UA browser biasa → dapat JS bundle tanpa data)  
+**Auth:** ❌ Tidak perlu  
+**Harga:** Gratis  
+**Diuji:** Juli 2026 ✅ — Nike `DZK3iOsRlWX`: 2.7M likes, 59.8K comments
+
+Halaman embed Instagram untuk `facebookexternalhit` UA menyajikan HTML statis
+(bukan JS-rendered) yang mengandung like count dan comment count.
+
+### Confirmed Works
+
+| Fungsi | Output | Status |
+|--------|--------|--------|
+| `igEmbedPostInfo(shortcode)` | like_count, comment_count, author | ✅ Tested |
+| `igEmbedBatch(shortcodes[])` | Batch beberapa shortcode | ✅ Tested |
+
+### Keunggulan vs yt-dlp (P20)
+
+- **Lebih cepat** (1-2 detik vs 4 detik) — tidak perlu spawn proses yt-dlp
+- Tidak perlu tool eksternal — pure HTTP fetch
+- Cocok untuk bulk scraping like/comment count saja
+
+### Limitation
+
+- Tidak ada caption, thumbnail, atau timestamp
+- `author` kadang mengembalikan collab user (bukan primary) jika post kolaborasi
+- Beberapa post sangat lama mungkin tidak return comment count (tergantung format embed)
+
+### Penting: UA facebookexternalhit WAJIB
+
+```bash
+# ✅ Works — facebookexternalhit
+curl "https://www.instagram.com/p/DZK3iOsRlWX/embed/captioned/" \
+  -H "User-Agent: facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"
+# → HTML dengan "2,779,825 likes" dan "View all 59,890 comments"
+
+# ❌ Tidak works — browser UA biasa
+curl "https://www.instagram.com/p/DZK3iOsRlWX/embed/captioned/" \
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)..."
+# → JS bundle 609KB tanpa like count
+```
+
+### Cara Pakai (TypeScript)
+
+```typescript
+import { igEmbedPostInfo, igEmbedBatch, igExtractShortcode } from "./src/instagram-embed/instagram";
+
+// Single post
+const info = await igEmbedPostInfo("DZK3iOsRlWX");
+console.log(info.like_count);    // 2779825
+console.log(info.comment_count); // 59890
+console.log(info.author);        // "nike" (atau collab partner jika post kolaborasi)
+
+// Dari URL
+const sc = igExtractShortcode("https://www.instagram.com/reel/DZK3iOsRlWX/");
+const data = await igEmbedPostInfo(sc!);
+
+// Batch
+const results = await igEmbedBatch(["DZK3iOsRlWX", "SHORTCODE2"], 1500);
+for (const r of results) {
+  if (r.status === "ok") {
+    console.log(`${r.like_count?.toLocaleString()} likes | ${r.comment_count?.toLocaleString()} comments`);
+  }
+}
+```
+
+```bash
+npm run test:instagram-embed
+```
+
+**Source:** `src/instagram-embed/instagram.ts`
+
+---
+
 ## Provider 19 — Jina AI Reader TikTok (GRATIS, No API Key) ★ BARU Batch 7
 
 **Situs:** https://r.jina.ai  
@@ -1072,6 +1236,41 @@ Berikut alternatif yang sudah diuji Juli 2026 dan hasilnya negatif:
 ---
 
 *Semua endpoint di README ini diuji langsung dan confirmed works — Juli 2026, Tim TITANPRO.*
+
+---
+
+## Batch 8 — Tes yang Dilakukan (Juli 2026)
+
+Fokus pada Instagram — mencari metode scraping post yang works dari datacenter. 2 provider baru ditemukan.
+
+### ✅ Works (ditambahkan ke repo)
+- **P20 — yt-dlp via uvx**: `igGetPostInfo(postUrl)` → like_count, comment_count, caption, thumbnail — GRATIS, tanpa install permanen. Works untuk post individual ✅
+- **P21 — Instagram Embed Scraper**: `igEmbedPostInfo(shortcode)` → like_count, comment_count, author dari `/embed/captioned/` dengan UA facebookexternalhit ✅
+
+### ❌ Tidak works dari server Replit (semua ditest langsung)
+- **Comments endpoint** `i.instagram.com/api/v1/media/ID/comments/` → status: fail (berbeda dari login_required — endpoint tidak merespons sama sekali)
+- **Likers endpoint** `i.instagram.com/api/v1/media/ID/likers/` → status: fail
+- **Hashtag sections** `i.instagram.com/api/v1/tags/NAME/sections/` → login_required
+- **Tagged posts** `i.instagram.com/api/v1/usertags/USER_ID/feed/` → login_required
+- **Media info by ID** `i.instagram.com/api/v1/media/ID/info/` → login_required
+- **Instagram GraphQL doc_id** `instagram.com/graphql/query/` → HTML login page (format query_hash sudah mati, format doc_id juga tidak works tanpa cookies)
+- **Threads API posts** (Barcelona UA) → JS-rendered, tidak ada JSON endpoint public
+- **picuki.com, dumpor.com, inflact.com, hypeauditor.com, socialblade IG** → CF block (Cloudflare)
+- **pixwox.com** → CF block
+- **instanavigation.com, anon-ig.com** → empty response (server tidak merespons)
+- **insta-stories.ru** → Next.js app, JS-rendered, tidak ada data dalam HTML static
+- **iganony.io** → CF block
+- **snapwidget.com** → returns HTML (no API)
+- **storysaver.net** → 302 redirect ke homepage
+- **storiesig.com** → CF block
+- **fastdl.app, savetoinsta.com** → empty/no response
+- **yt-dlp untuk user listing** (`/nike/posts/`, `/nike/reels/`, `/nike/tagged/`, `/nike/`) → **429 rate limit** dari datacenter IP
+- **yt-dlp beberapa post lama** (e.g. C9Dcs1hvRMT) → "Instagram sent an empty media response" (post accessible di browser tapi yt-dlp tidak bisa akses dari datacenter)
+- **Instagram oEmbed public** `instagram.com/api/oembed/` → HTML embed (tidak ada data numerik), hanya HTML widget
+- **Instagram oEmbed Facebook Graph** → "Permission Denied" tanpa access token
+- **HikerAPI** → ada tapi perlu paid key
+- **not.just.analytics** → empty response
+- **RapidAPI Instagram scrapers** → "Invalid API key" (butuh key)
 
 ---
 
