@@ -37,8 +37,12 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **16** | **instagrapi** ★ BARU Batch 5 | Instagram | **Gratis** | Login IG | ⚠️ Butuh login |
 | **17** | **instagram-private-api (Node)** ★ BARU Batch 5 | Instagram | **Gratis** | Login IG | ⚠️ Butuh login |
 | **18** | **Douyin Hot Search** ★ BARU Batch 6 | TikTok (China) | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **19** | **Jina AI Reader** ★ BARU Batch 7 | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
-> > **Update Juli 2026 Batch 6 (terbaru):**
+> > **Update Juli 2026 Batch 7 (terbaru):**
+> - ★ P19 — Jina AI Reader TikTok: profil (follower/following/likes/bio/avatar), hashtag post count, video metadata — GRATIS, tanpa API key ✅
+>
+> > **Update Juli 2026 Batch 6:**
 > - ★ P18 — Douyin Hot Search: 50 trending topics real-time (gratis, tanpa login, tanpa API key!) ✅
 >
 > > **Update Juli 2026 Batch 5:**
@@ -92,6 +96,8 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | Followers + avg_likes + engagement (IG) | SocialBlade (P10) socialbladeInstagramProfile() BARU |
 | Followers + total_likes (TikTok, gratis) | SocialBlade (P10) socialbladeTikTokProfile() BARU |
 | **Trending topic China/Douyin (real-time)** | Douyin Hot Search (P18) douyinHotSearch() ★ BARU |
+| **Profil TikTok cepat tanpa key** | **Jina AI (P19)** `jinaTikTokProfile()` ★ BARU Batch 7 |
+| **Hashtag TikTok post count tanpa key** | **Jina AI (P19)** `jinaTikTokHashtag()` ★ BARU Batch 7 |
 
 ---
 
@@ -146,6 +152,9 @@ Fullscrap/
 │   │
 │   ├── instagram-private-api/
 │   │   └── instagram.ts           ← P17: Instagram Private API Node.js ★ BARU Batch 5
+│   │
+│   ├── jina/
+│   │   └── tiktok.ts              ← P19: TikTok via Jina AI Reader (GRATIS) ★ BARU
 │   │
 │   └── utils/
 │       └── parse-username.ts      ← URL/handle parser
@@ -576,6 +585,9 @@ IG_USERNAME=nike npm run test:instagram-web
 pip install yt-dlp
 python src/python/ytdlp_instagram.py
 
+# ★ Provider 19 — Jina AI TikTok (gratis, langsung jalan)
+npm run test:jina-tiktok
+
 # ★ Provider 5 — tikmate.app (gratis, langsung jalan)
 npm run test:tikmate
 
@@ -601,24 +613,24 @@ npm run test:instaloader          # ⚠️ butuh pip install
 
 ## Perbandingan Kemampuan
 
-| Fitur | EnsembleData | TikWM | tikmate ★ | savetik ★ | IG Web | IG Android ★ | yt-dlp |
-|-------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Fitur | EnsembleData | TikWM | tikmate ★ | savetik ★ | IG Web | IG Android ★ | yt-dlp | Jina AI ★ |
+|-------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | **TikTok** | | | | | | | |
-| User profil | ✅ | ✅ | — | — | — | — | — |
-| User video list | ✅ | ⚠️ CF* | — | — | — | — | — |
-| Video metadata | ✅ | ✅ | ✅ | — | — | — | — |
-| Video download | — | ✅ | ✅** | ✅ | — | — | — |
-| Hashtag info/video | ✅ | ✅ | — | — | — | — | — |
-| Search video | ✅ | ✅ | — | — | — | — | — |
+| User profil | ✅ | ✅ | — | — | — | — | — | ✅ |
+| User video list | ✅ | ⚠️ CF* | — | — | — | — | — | — |
+| Video metadata | ✅ | ✅ | ✅ | — | — | — | — | ✅ |
+| Video download | — | ✅ | ✅** | ✅ | — | — | — | — |
+| Hashtag info/video | ✅ | ✅ | — | — | — | — | — | ✅ |
+| Search video | ✅ | ✅ | — | — | — | — | — | — |
 | **Instagram** | | | | | | | |
-| User profil | ✅ | — | — | — | ✅ | — | — |
-| Posts list | ✅ | — | — | — | ✅ | ✅ | — |
-| Reels list | ✅ | — | — | — | ✅ | ✅ | — |
-| Reels **play count** | ✅ | — | — | — | ⚠️ | **✅** | — |
-| Post detail | ✅ | — | — | — | — | — | ✅ |
-| Stories | ✅ | — | — | — | ❌ | ❌ | — |
-| Followers | ✅ | — | — | — | ❌ | ❌ | — |
-| Search user | ✅ | — | — | — | ✅ | — | — |
+| User profil | ✅ | — | — | — | ✅ | — | — | — |
+| Posts list | ✅ | — | — | — | ✅ | ✅ | — | — |
+| Reels list | ✅ | — | — | — | ✅ | ✅ | — | — |
+| Reels **play count** | ✅ | — | — | — | ⚠️ | **✅** | — | — |
+| Post detail | ✅ | — | — | — | — | — | ✅ | — |
+| Stories | ✅ | — | — | — | ❌ | ❌ | — | — |
+| Followers | ✅ | — | — | — | ❌ | ❌ | — | — |
+| Search user | ✅ | — | — | — | ✅ | — | — | — |
 
 > ⚠️ CF* = TikWM `/api/user/posts` CF-protected dari datacenter. Works dari browser/residential.  
 > ✅** tikmate: download via token (`https://api.tikmate.app/download?token=…` → 302 ke CDN)
@@ -848,6 +860,99 @@ IG_USER_ID=183250726 npm run test:instagram-android
 
 ---
 
+## Provider 19 — Jina AI Reader TikTok (GRATIS, No API Key) ★ BARU Batch 7
+
+**Situs:** https://r.jina.ai  
+**Base URL:** `https://r.jina.ai/{target-url}`  
+**Auth:** ❌ Tidak perlu (rate limit ~200 req/hari gratis)  
+**Harga:** Gratis (opsional upgrade dengan API key untuk lebih banyak request)  
+**Diuji:** Juli 2026 ✅ — charlidamelio ✅, mrbeast ✅, nike ✅, khaby.lame ✅, therock ✅
+
+Jina AI Reader adalah layanan yang merender halaman web sebagai headless browser dan mengembalikan JSON bersih.
+Tidak ada session, tidak ada cookie, tidak ada bot detection — works langsung dari datacenter.
+
+### Confirmed Works
+
+| Fungsi | Deskripsi | Output | Status |
+|--------|-----------|--------|--------|
+| `jinaTikTokProfile(username)` | Profil user TikTok | follower, following, totalLikes, bio, avatar | ✅ Tested |
+| `jinaTikTokHashtag(hashtag)` | Info hashtag | postCount | ✅ Tested |
+| `jinaTikTokVideoMeta(user, videoId)` | Metadata video publik | title, description | ✅ Tested |
+| `jinaTikTokBatch(usernames[])` | Batch profil dengan auto-delay | array profil | ✅ Tested |
+
+### Limitation
+
+- Angka follower **dibulatkan** (e.g. 159.3M = 159_300_000) — bukan nilai exact
+- Tidak ada per-video stats (like, comment, play count) → gunakan `tikwmVideoByUrl()` (P2) untuk itu
+- Instagram via Jina **TIDAK WORKS** (Instagram return halaman login ke Jina bot)
+- Rate limit: ~200 req/hari tanpa API key; untuk lebih banyak: https://jina.ai/#apiform
+
+### Curl Example
+
+```bash
+# Profil user TikTok
+curl -s -H "Accept: application/json" \
+  "https://r.jina.ai/https://www.tiktok.com/@charlidamelio"
+# Response: { code: 200, data: { title: "charli d'amelio (@charlidamelio) | TikTok",
+#   description: "12.3B Likes. 159.3M Followers. 1404 Following. charli...",
+#   content: "**159.3M**Followers\n**1,404**Following\n**12.3B**Likes..." } }
+
+# Hashtag info
+curl -s -H "Accept: application/json" \
+  "https://r.jina.ai/https://www.tiktok.com/tag/fyp"
+# description: "fyp | 9.1B posts Watch the latest videos..."
+```
+
+### Cara Pakai (TypeScript)
+
+```typescript
+import {
+  jinaTikTokProfile,
+  jinaTikTokHashtag,
+  jinaTikTokVideoMeta,
+  jinaTikTokBatch,
+  parseJinaCount,
+} from "./src/jina/tiktok";
+
+// 1. Profil user
+const profile = await jinaTikTokProfile("charlidamelio");
+console.log(profile.displayName);                       // "charli d'amelio"
+console.log(profile.followerCount.toLocaleString());    // "159,300,000"
+console.log(profile.followingCount);                    // 1404
+console.log(profile.totalLikes.toLocaleString());       // "12,300,000,000"
+console.log(profile.bio);                               // "Watch the latest video..."
+console.log(profile.avatarUrl);                         // CDN URL (expires beberapa jam)
+
+// 2. Hashtag info
+const ht = await jinaTikTokHashtag("fyp");
+console.log(`#${ht.name}: ${ht.postCount.toLocaleString()} posts`);
+// → #fyp: 9,100,000,000 posts
+
+// 3. Video metadata
+const meta = await jinaTikTokVideoMeta("espn", "7664344969548713246");
+if (meta) {
+  console.log(meta.title);        // "ESPN on TikTok"
+  console.log(meta.description);  // "That's fire 🔥 (via @IShowSpeed) ..."
+}
+
+// 4. Batch profil (auto-delay 1.5 detik antar request)
+const results = await jinaTikTokBatch(["charlidamelio", "mrbeast", "nike"]);
+for (const r of results) {
+  if (r.status === "ok") {
+    console.log(`@${r.username}: ${r.followerCount.toLocaleString()} followers`);
+  }
+}
+```
+
+```bash
+npm run test:jina-tiktok
+```
+
+**Source:** `src/jina/tiktok.ts`
+
+
+---
+
 ## Troubleshooting
 
 ### ❌ TikWM — Cloudflare Challenge (`<!DOCTYPE html>... Just a moment`)
@@ -967,6 +1072,38 @@ Berikut alternatif yang sudah diuji Juli 2026 dan hasilnya negatif:
 ---
 
 *Semua endpoint di README ini diuji langsung dan confirmed works — Juli 2026, Tim TITANPRO.*
+
+---
+
+## Batch 7–12 — Tes yang Dilakukan (Juli 2026)
+
+Lebih dari 55 site/metode ditest dari server Replit. Confirmed works: 1 provider baru.
+
+### ✅ Works (ditambahkan ke repo)
+- **P19 — Jina AI Reader TikTok**: `jinaTikTokProfile()` (follower/following/likes/bio/avatar), `jinaTikTokHashtag()` (post count), `jinaTikTokVideoMeta()` — GRATIS tanpa API key, works dari datacenter ✅
+- **TikWM video detail dengan URL valid** `tikwmVideoByUrl()`: confirmed works (sudah ada di repo sejak Batch 1) — masalah sebelumnya karena URL video yang sudah dihapus/tidak valid
+
+### ❌ Tidak works dari server Replit (semua ditest langsung)
+
+**TikTok analytics:** countik.com (CF), exolyt.com (404), toolzu.com (404), socialcounts.org (404), tokcount.com (ERR), noxinfluencer.com (CF), tikrank.com (ERR), scraptik.app (ERR), tiksta.net (ERR), tiktokstats.org (ERR), trackacc.com (404)
+
+**TikTok web APIs:** `/api/user/detail/`, `/api/search/`, `/api/recommend/`, `/api/challenge/`, `/api/post/item_list/` — semua HTML (CF/JS wall); `m.tiktok.com/api/item_list` — JSON 200 tapi data kosong
+
+**TikWM endpoints 404:** comment list, related videos, music posts
+
+**Cobalt.tools:** butuh JWT auth (`error.api.auth.jwt.missing`), tidak ada public instance
+
+**Instagram via Jina:** return halaman login (Instagram block Jina bot) ❌
+
+**Instagram i.instagram.com endpoints baru:** usertags (400), chaining (400), fbsearch blended (404), account suggestions (400), timeline (400), interesting (404), igtv browse (404), shortcode info (404), reels explore (404)
+
+**Instagram viewers (semua):** inflact API (ERR), greatfon/looknstagram/watchinsta/picnob/igram.io/storiesig.net/instastories.app/izoom.me/storieshunter.com/instastories.com (semua ERR/timeout/CF), storysaver.net (HTML), instadp.com (HTML), storyviewer.app (526)
+
+**Instagram GraphQL:** query_hash format (400 invalid)
+
+**Instagram alternative scrapers:** instagrammernews.com (HTML), imginn.com API (410), bigspy.com (ERR), statflux.com (HTML)
+
+**HikerAPI:** ada tapi perlu paid key (tidak bisa ditest)
 
 ---
 
