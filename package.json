@@ -36,7 +36,8 @@
     "test:douyin": "ts-node examples/test-douyin.ts",
     "test:jina-tiktok": "ts-node examples/test-jina-tiktok.ts",
     "test:ytdlp-instagram": "ts-node examples/test-ytdlp-instagram.ts",
-    "test:instagram-embed": "ts-node examples/test-instagram-embed.ts"
+    "test:instagram-embed": "ts-node examples/test-instagram-embed.ts",
+    "test:instagram-og": "ts-node examples/test-instagram-og.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.5"

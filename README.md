@@ -40,11 +40,13 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **19** | **Jina AI Reader** ★ BARU Batch 7 | TikTok | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **20** | **yt-dlp via uvx** ★ BARU Batch 8 | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **21** | **Instagram Embed Scraper** ★ BARU Batch 8 | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
+| **22** | **Instagram OG / Twitterbot** ★ BARU Batch 8 | Instagram | **Gratis** | ❌ Tidak perlu | ⚠️ Rate-limited |
 
 > > **Update Juli 2026 Batch 8 (terbaru):**
 > - ★ P20 — yt-dlp via uvx: like_count, comment_count, caption, thumbnail, format list untuk post Instagram individual (tanpa install permanen, cukup uvx) ✅
 > - ★ P21 — Instagram Embed Scraper: like_count + comment_count + author dari `/embed/captioned/` dengan UA facebookexternalhit ✅
-> - ❌ Ditest tapi tidak works: comments i.instagram.com (fail), likers i.instagram.com (fail), hashtag sections (login_required), tagged posts (login_required), media info by ID (login_required), Instagram GraphQL doc_id (HTML response), Threads API posts (JS-rendered), picuki/dumpor/inflact/hypeauditor/socialblade IG (CF block), pixwox/instanavigation/anon-ig (empty/timeout), insta-stories.ru (JS-rendered Next.js), iganony.io (CF), snapwidget.com (HTML), storysaver.net (redirect), storiesig.com (CF), fastdl.app/savetoinsta (empty), yt-dlp untuk user listing pages (429 dari datacenter)
+> - ★ P22 — Instagram OG/Twitterbot: profil (follower_count approx, following exact, post_count exact) + post (like approx, comment approx, caption exact) via `og:description` dengan Twitterbot UA ⚠️ rate-limited ~3-5 req/IP
+> - ❌ Ditest tapi tidak works: comments i.instagram.com (fail), likers i.instagram.com (fail), hashtag sections (login_required), tagged posts (login_required), media info by ID (login_required), Instagram GraphQL doc_id (HTML response), Threads API posts (JS-rendered), picuki/dumpor/inflact/hypeauditor/socialblade IG (CF block), pixwox/instanavigation/anon-ig (empty/timeout), insta-stories.ru (JS-rendered Next.js), iganony.io (CF), snapwidget.com (HTML), storysaver.net (redirect), storiesig.com (CF), fastdl.app/savetoinsta (empty), yt-dlp untuk user listing pages (429 dari datacenter), Googlebot/Bingbot/Slackbot/WhatsApp/Pinterest/TelegramBot UA (semua 0-byte setelah Twitterbot rate-limit)
 >
 > > **Update Juli 2026 Batch 7:**
 > - ★ P19 — Jina AI Reader TikTok: profil (follower/following/likes/bio/avatar), hashtag post count, video metadata — GRATIS, tanpa API key ✅
@@ -107,6 +109,7 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **Hashtag TikTok post count tanpa key** | **Jina AI (P19)** `jinaTikTokHashtag()` ★ BARU Batch 7 |
 | **Like + comment count post IG (cepat)** | **Instagram Embed (P21)** `igEmbedPostInfo()` ★ BARU Batch 8 |
 | **Post IG detail lengkap by URL** | **yt-dlp (P20)** `igGetPostInfo()` ★ BARU Batch 8 |
+| **Profile followers/following (approx, rate-limited)** | **Instagram OG (P22)** `igOgProfile()` ★ BARU Batch 8 |
 
 ---
 
@@ -171,6 +174,9 @@ Fullscrap/
 │   ├── instagram-embed/
 │   │   └── instagram.ts           ← P21: Like/comment dari embed page (GRATIS) ★ BARU Batch 8
 │   │
+│   ├── instagram-og/
+│   │   └── instagram.ts           ← P22: OG/Twitterbot profile+post (GRATIS, ⚠️ rate-limited) ★ BARU Batch 8
+│   │
 │   └── utils/
 │       └── parse-username.ts      ← URL/handle parser
 │
@@ -189,7 +195,8 @@ Fullscrap/
     ├── test-instagrapi.py         ← Test instagrapi ★ BARU Batch 5 (⚠️ butuh login IG)
     ├── test-instagram-private-api.ts ← Test instagram-private-api ★ BARU Batch 5 (⚠️ butuh login IG)
     ├── test-ytdlp-instagram.ts    ← Test P20: yt-dlp post IG ★ BARU Batch 8
-    └── test-instagram-embed.ts    ← Test P21: Embed like/comment ★ BARU Batch 8
+    ├── test-instagram-embed.ts    ← Test P21: Embed like/comment ★ BARU Batch 8
+    └── test-instagram-og.ts       ← Test P22: OG/Twitterbot profile+post ★ BARU Batch 8
     ├── test-tiktok-rapidapi.ts    ← Test RapidAPI (⚠️ perlu RAPIDAPI_KEY)
     └── test-instaloader.py        ← Test instaloader (⚠️ perlu pip)
 ```
@@ -1021,6 +1028,78 @@ npm run test:instagram-embed
 ```
 
 **Source:** `src/instagram-embed/instagram.ts`
+
+---
+
+## Provider 22 — Instagram OG / Twitterbot UA (GRATIS, ⚠️ Rate-Limited) ★ BARU Batch 8
+
+**Endpoint:** `GET https://www.instagram.com/{username}/` dan `GET https://www.instagram.com/p/{shortcode}/`  
+**UA WAJIB:** `Twitterbot/1.0`  
+**Auth:** ❌ Tidak perlu  
+**Harga:** Gratis  
+**Diuji:** Juli 2026 ✅ — Nike post `DZK3iOsRlWX`: 3M likes, 60K comments, caption exact
+
+Instagram menyajikan HTML statis dengan og:description berisi statistik untuk bot social media Twitter.
+Post: `"3M likes, 60K comments - nike on June 4, 2026: "caption...""`
+Profile: `"292M Followers, 267 Following, 1,666 Posts - See Instagram photos and videos from Nike (@nike)"`
+
+### Confirmed Works
+
+| Fungsi | Output | Akurasi | Status |
+|--------|--------|---------|--------|
+| `igOgPost(shortcode)` | like_count, comment_count, username, date, **caption**, thumbnail | like/comment: **APPROX** (3M, 60K) | ✅ Tested |
+| `igOgProfile(username)` | follower_count, following_count, post_count, display_name | follower: APPROX, following+post: **EXACT** | ✅ Tested |
+| `igOgProfileBatch(usernames[])` | Batch beberapa profil | — | ✅ Ready |
+
+### ⚠️ Rate Limit — Ini KELEMAHAN UTAMA
+
+Dari datacenter Replit, Twitterbot UA hanya bisa ~3-5 request sebelum Instagram merespons 0-byte.
+Solusi untuk produksi: gunakan residential proxy / rotate IP.
+
+```bash
+# WORKS request pertama sampai ke-5
+curl "https://www.instagram.com/nike/" -H "User-Agent: Twitterbot/1.0"
+# → 706KB HTML dengan og:description lengkap ✅
+
+# TIDAK WORKS setelah rate-limit (0-byte)
+curl "https://www.instagram.com/natgeo/" -H "User-Agent: Twitterbot/1.0"
+# → 0 byte (tidak ada respons) ❌
+```
+
+### Keunggulan vs P21 (Embed Scraper)
+
+- Dapat **caption lengkap** (Embed tidak bisa)
+- Dapat **thumbnail** CDN URL
+- Dapat **tanggal upload** yang parsed
+- Cocok untuk use case yang perlu teks caption, bukan hanya statistik
+
+### Cara Pakai (TypeScript)
+
+```typescript
+import { igOgPost, igOgProfile, parseSuffixedNumber } from "./src/instagram-og/instagram";
+
+// Post stats + caption
+const post = await igOgPost("DZK3iOsRlWX");
+console.log(post.like_count);    // 3000000 (APPROX — "3M likes")
+console.log(post.comment_count); // 60000 (APPROX — "60K comments")
+console.log(post.username);      // "nike"
+console.log(post.date_str);      // "June 4, 2026"
+console.log(post.caption);       // "It was all going to plan until instincts took over…\nRip The Script"
+console.log(post.thumbnail);     // CDN URL gambar
+
+// Profile stats (perlu tunggu ~30 detik setelah request sebelumnya)
+const profile = await igOgProfile("nike");
+console.log(profile.follower_count); // 292000000 (APPROX — "292M")
+console.log(profile.following_count); // 267 (EXACT)
+console.log(profile.post_count);     // 1666 (EXACT)
+console.log(profile.display_name);   // "Nike"
+```
+
+```bash
+npm run test:instagram-og
+```
+
+**Source:** `src/instagram-og/instagram.ts`
 
 ---
 
