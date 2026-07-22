@@ -1,7 +1,7 @@
 {
   "name": "fullscrap",
   "version": "1.0.0",
-  "description": "Panduan & source code lengkap scraping TikTok dan Instagram — Tim TITANPRO",
+  "description": "Panduan & source code lengkap scraping TikTok dan Instagram \u2014 Tim TITANPRO",
   "private": true,
   "scripts": {
     "test:tiktok-ensemble": "ts-node examples/test-tiktok-ensemble.ts",
@@ -15,7 +15,7 @@
     "test:tiktok-oembed": "ts-node examples/test-tiktok-oembed.ts",
     "test:tiktok-rapidapi": "ts-node examples/test-tiktok-rapidapi.ts",
     "test:instaloader": "python3 examples/test-instaloader.py",
-    "test:all-free": "ts-node examples/test-tikwm.ts && ts-node examples/test-tikwm-extended.ts && ts-node examples/test-tikwm-new.ts && ts-node examples/test-instagram-web.ts && ts-node examples/test-tikmate.ts && ts-node examples/test-savetik.ts && ts-node examples/test-instagram-android.ts && ts-node examples/test-instagram-by-id.ts && ts-node examples/test-socialblade.ts && ts-node examples/test-tikwm-extra.ts && ts-node examples/test-wayback-tiktok.ts && ts-node examples/test-instagram-web-v2.ts && ts-node examples/test-imginn.ts && ts-node examples/test-douyin.ts && ts-node examples/test-jina-tiktok.ts",
+    "test:all-free": "ts-node examples/test-tikwm.ts && ts-node examples/test-tikwm-extended.ts && ts-node examples/test-tikwm-new.ts && ts-node examples/test-instagram-web.ts && ts-node examples/test-tikmate.ts && ts-node examples/test-savetik.ts && ts-node examples/test-instagram-android.ts && ts-node examples/test-instagram-by-id.ts && ts-node examples/test-socialblade.ts && ts-node examples/test-tikwm-extra.ts && ts-node examples/test-wayback-tiktok.ts && ts-node examples/test-instagram-web-v2.ts && ts-node examples/test-imginn.ts && ts-node examples/test-douyin.ts && ts-node examples/test-jina-tiktok.ts && ts-node examples/test-instagram-cookie.ts",
     "typecheck": "tsc --noEmit",
     "test:tikwm-new": "ts-node examples/test-tikwm-new.ts",
     "test:instagram-by-id": "ts-node examples/test-instagram-by-id.ts",
@@ -37,7 +37,8 @@
     "test:jina-tiktok": "ts-node examples/test-jina-tiktok.ts",
     "test:ytdlp-instagram": "ts-node examples/test-ytdlp-instagram.ts",
     "test:instagram-embed": "ts-node examples/test-instagram-embed.ts",
-    "test:instagram-og": "ts-node examples/test-instagram-og.ts"
+    "test:instagram-og": "ts-node examples/test-instagram-og.ts",
+    "test:instagram-cookie": "ts-node examples/test-instagram-cookie.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.5"

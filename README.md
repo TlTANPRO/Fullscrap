@@ -41,8 +41,13 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **20** | **yt-dlp via uvx** ★ BARU Batch 8 | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **21** | **Instagram Embed Scraper** ★ BARU Batch 8 | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 | **22** | **Instagram OG / Twitterbot** ★ BARU Batch 8 | Instagram | **Gratis** | ❌ Tidak perlu | ⚠️ Rate-limited |
+| **23** | **Instagram Browser Cookie** ★ BARU Batch 9 | Instagram | **Gratis** | ❌ Tidak perlu | ✅ Confirmed |
 
-> > **Update Juli 2026 Batch 8 (terbaru):**
+> > **Update Juli 2026 Batch 9 (terbaru):**
+> - ★ P23 — Instagram Browser Cookie: profil lengkap + angka follower EXACT (291,746,771 bukan "291.7M") via auto-fetch csrftoken dari homepage. Lebih reliable dari datacenter vs P13 (P13 sering 429 tanpa cookie). Confirmed @nike, @instagram, @nasa, @mrbeast ✅
+> - ❌ Ditest tapi tidak works: instaloader uvx (403 dari graphql), imginn user_posts AJAX (CF managed challenge), media/info endpoint (403/empty), feed/user endpoint (rate-limited), graph.facebook.com IG oEmbed (hanya embed HTML, no like count), semua CORS proxy (401/timeout), semua analytics sites (inflact/noxinfluencer/modash/hypeauditor/trackalytics — semua timeout/404/CF), semua IG profile requests (429 rate-limited dari datacenter setelah ~3 req), Googlebot/Bingbot/Applebot untuk post page (returns 900KB HTML tapi no JSON-LD dengan like count — data tersimpan di client-side React state), SocialBlade bastet endpoint (domain tidak exist), Threads.net API (405/400), semua IG downloader sites baru (ssig.app/instasaved.com/fastsave.io/saveig.app — semua tidak bisa resolve DNS dari Replit datacenter)
+>
+> > **Update Juli 2026 Batch 8:**
 > - ★ P20 — yt-dlp via uvx: like_count, comment_count, caption, thumbnail, format list untuk post Instagram individual (tanpa install permanen, cukup uvx) ✅
 > - ★ P21 — Instagram Embed Scraper: like_count + comment_count + author dari `/embed/captioned/` dengan UA facebookexternalhit ✅
 > - ★ P22 — Instagram OG/Twitterbot: profil (follower_count approx, following exact, post_count exact) + post (like approx, comment approx, caption exact) via `og:description` dengan Twitterbot UA ⚠️ rate-limited ~3-5 req/IP
@@ -110,6 +115,7 @@ Tidak ada "mungkin works" atau "biasanya works" — semua sudah dicoba Juli 2026
 | **Like + comment count post IG (cepat)** | **Instagram Embed (P21)** `igEmbedPostInfo()` ★ BARU Batch 8 |
 | **Post IG detail lengkap by URL** | **yt-dlp (P20)** `igGetPostInfo()` ★ BARU Batch 8 |
 | **Profile followers/following (approx, rate-limited)** | **Instagram OG (P22)** `igOgProfile()` ★ BARU Batch 8 |
+| **Profil IG exact follower count (tidak approximate)** | **P23 Browser Cookie** `igCookieGetProfile()` ★ BARU Batch 9 |
 
 ---
 
@@ -175,6 +181,11 @@ Fullscrap/
 │   │   └── instagram.ts           ← P21: Like/comment dari embed page (GRATIS) ★ BARU Batch 8
 │   │
 │   ├── instagram-og/
+│   │   └── instagram.ts           ← P22: OG/Twitterbot scraping (⚠️ rate-limited) ★ BARU Batch 8
+│   │
+│   ├── instagram-cookie/
+│   │   └── instagram.ts           ← P23: Profil via auto-fetch csrftoken cookie (GRATIS) ★ BARU Batch 9
+│   │
 │   │   └── instagram.ts           ← P22: OG/Twitterbot profile+post (GRATIS, ⚠️ rate-limited) ★ BARU Batch 8
 │   │
 │   └── utils/
